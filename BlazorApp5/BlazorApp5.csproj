@@ -54,4 +54,9 @@
         <ItemGroup>
                 <ProjectReference Include="..\GetAndEditWO.UI\GetAndEditWO.UI.csproj" />
         </ItemGroup>
+
+        <!-- Ensure the host process isn't left running between builds so dependent assemblies can be copied -->
+        <Target Name="TerminateRunningHost" BeforeTargets="ResolveReferences" Condition="'$(OS)' == 'Windows_NT'">
+                <Exec Command="powershell -NoProfile -NonInteractive -Command &quot;Get-Process BlazorApp5 -ErrorAction SilentlyContinue | Stop-Process -Force&quot;" IgnoreExitCode="true" />
+        </Target>
 </Project>
