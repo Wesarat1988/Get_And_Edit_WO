@@ -39,6 +39,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<Folder Include="Properties\" />
 		<Folder Include="wwwroot\exports\" />
 		<Folder Include="wwwroot\tools\" />
 	</ItemGroup>
