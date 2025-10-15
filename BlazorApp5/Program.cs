@@ -1,5 +1,6 @@
 using BlazorApp5;
 using BlazorApp5.Services;
+using GetAndEditWO.UI;
 using System.IO;
 using System.Linq;
 
@@ -12,6 +13,7 @@ builder.Services.AddServerSideBlazor();
 builder.Services.AddHttpClient();
 builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
 builder.Services.Configure<ModbusOptions>(builder.Configuration.GetSection("Modbus"));
+builder.Services.AddGetAndEditWo(builder.Configuration);
 
 builder.Services.AddSingleton<MesService>();
 builder.Services.AddScoped<RoutingCheckService>();

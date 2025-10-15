@@ -1,4 +1,13 @@
 .vs/
 bin/
 obj/
-Token_GitHub_*.txt
+node_modules/
+packages/
+*.user
+*.suo
+*.swp
+*.tmp
+*.log
+*.cache
+appsettings.*.local.json
+Token_*.*
