@@ -8,49 +8,64 @@
 @using System.Text.Json
 @using GetAndEditWO.UI.Internal
 
-<div class="workorder-layout">
-    <section class="card settings-card">
-        <header class="card-header">
-            <div>
-                <h1>⚙️ Work Order Settings</h1>
-                <p class="subtitle">จัดการข้อมูล Work Order ด้วยการดึงจาก MES และแก้ไขข้อมูลที่จำเป็น</p>
-            </div>
-            <div class="card-actions">
-                <button class="btn primary" @onclick="OpenGetMoModal">📥 Get MO</button>
-                <button class="btn secondary" @onclick="ToggleEditModeAsync">@(IsEditMode ? "💾 Save" : "✏️ Edit MO")</button>
-            </div>
+<div class="workorder-page">
+    <section class="hero-card surface-card">
+        <div class="hero-text">
+            <span class="eyebrow">Work Order Settings</span>
+            <h1>จัดการ Work Order ได้อย่างมั่นใจ</h1>
+            <p class="subtitle">ดึงข้อมูลจาก MES และปรับแก้รายละเอียดสำคัญได้ในหน้าจอเดียว</p>
+        </div>
+        <div class="hero-actions">
+            <button class="btn primary" @onclick="OpenGetMoModal">
+                <span class="btn-icon">📥</span>
+                <span>Get MO</span>
+            </button>
+            <button class="btn ghost" @onclick="ToggleEditModeAsync">
+                <span class="btn-icon">@(IsEditMode ? "💾" : "✏️")</span>
+                <span>@(IsEditMode ? "Save" : "Edit MO")</span>
+            </button>
+        </div>
+    </section>
+
+    <section class="form-card surface-card">
+        <header class="form-card-header">
+            <h2>รายละเอียด Work Order</h2>
+            <p>ตรวจสอบและแก้ไขข้อมูลสำคัญก่อนยืนยันการทำงาน</p>
         </header>
 
         <div class="form-grid">
-            <label>
-                <span>Work Order</span>
+            <label class="field">
+                <span class="field-label">Work Order</span>
                 <input class="input" @bind="WorkOrder" @bind:event="oninput" readonly="@(!IsEditMode)" />
             </label>
-            <label>
-                <span>Model</span>
+            <label class="field">
+                <span class="field-label">Model</span>
                 <input class="input" @bind="Model" @bind:event="oninput" readonly="@(!IsEditMode)" />
             </label>
-            <label>
-                <span>Line</span>
+            <label class="field">
+                <span class="field-label">Line</span>
                 <input class="input" @bind="Line" @bind:event="oninput" readonly="@(!IsEditMode)" />
             </label>
-            <label>
-                <span>Section</span>
+            <label class="field">
+                <span class="field-label">Section</span>
                 <input class="input" @bind="Section" @bind:event="oninput" readonly="@(!IsEditMode)" />
             </label>
-            <label>
-                <span>Group</span>
+            <label class="field">
+                <span class="field-label">Group</span>
                 <input class="input" @bind="Group" @bind:event="oninput" readonly="@(!IsEditMode)" />
             </label>
-            <label>
-                <span>Station</span>
+            <label class="field">
+                <span class="field-label">Station</span>
                 <input class="input" @bind="Station" @bind:event="oninput" readonly="@(!IsEditMode)" />
             </label>
         </div>
 
         @if (!string.IsNullOrWhiteSpace(StatusMessage))
         {
-            <div class="status-message @StatusLevel">@StatusMessage</div>
+            <div class="status-banner @StatusLevel">
+                <span class="status-dot"></span>
+                <span>@StatusMessage</span>
+            </div>
         }
     </section>
 </div>
@@ -60,54 +75,57 @@
     <div class="modal-backdrop" @onclick="CloseGetMoModal">
         <div class="modal-card" @onclick:stopPropagation="true">
             <header class="modal-header">
-                <h2>📥 ใส่ข้อมูล GetMO</h2>
+                <div>
+                    <p class="modal-eyebrow">นำเข้าข้อมูล</p>
+                    <h2>📥 ใส่ข้อมูล GetMO</h2>
+                </div>
                 <button class="icon-button" @onclick="CloseGetMoModal">✖</button>
             </header>
             <div class="modal-body">
-                <label>
-                    <span>EMP_NO</span>
+                <label class="field">
+                    <span class="field-label">EMP_NO</span>
                     <input class="input" @bind="EmpNo" @bind:event="oninput" />
                 </label>
-                <label>
-                    <span>FACTORY</span>
+                <label class="field">
+                    <span class="field-label">FACTORY</span>
                     <input class="input" @bind="Factory" @bind:event="oninput" />
                 </label>
-                <label>
-                    <span>LINE_NAME</span>
+                <label class="field">
+                    <span class="field-label">LINE_NAME</span>
                     <input class="input" @bind="InputLine" @bind:event="oninput" />
                 </label>
-                <label>
-                    <span>GETDATA_TYPE</span>
+                <label class="field">
+                    <span class="field-label">GETDATA_TYPE</span>
                     <select class="input" @bind="GetDataType">
                         <option value="0">0 - Mean in 180 Day</option>
                         <option value="1">1 - Mean in 7 Day</option>
                     </select>
                 </label>
-                <label>
-                    <span>MO_TYPE</span>
+                <label class="field">
+                    <span class="field-label">MO_TYPE</span>
                     <select class="input" @bind="MoType">
                         <option value="0">0 - Main Line</option>
                         <option value="1">1 - AI/SMT</option>
                     </select>
                 </label>
-                <label>
-                    <span>Section</span>
+                <label class="field">
+                    <span class="field-label">Section</span>
                     <input class="input" @bind="Pending.Section" readonly />
                 </label>
-                <label>
-                    <span>Group</span>
+                <label class="field">
+                    <span class="field-label">Group</span>
                     <input class="input" @bind="Pending.Group" readonly />
                 </label>
-                <label>
-                    <span>Station</span>
+                <label class="field">
+                    <span class="field-label">Station</span>
                     <div class="input-with-button">
                         <input class="input" @bind="Pending.Station" readonly />
-                        <button class="btn tertiary" @onclick="OpenStationPickerAsync">เลือก</button>
+                        <button class="btn ghost" @onclick="OpenStationPickerAsync">เลือก</button>
                     </div>
                 </label>
             </div>
             <footer class="modal-footer">
-                <button class="btn secondary" @onclick="CloseGetMoModal">ยกเลิก</button>
+                <button class="btn ghost" @onclick="CloseGetMoModal">ยกเลิก</button>
                 <button class="btn primary" @onclick="GetMOAsync" disabled="@isLoading">@(isLoading ? "กำลังดึง..." : "✅ ดึงข้อมูล")</button>
             </footer>
         </div>
@@ -119,12 +137,15 @@
     <div class="modal-backdrop" @onclick="CloseStationPicker">
         <div class="modal-card" @onclick:stopPropagation="true">
             <header class="modal-header">
-                <h2>📋 เลือก Section, Group, Station</h2>
+                <div>
+                    <p class="modal-eyebrow">ค้นหาอย่างรวดเร็ว</p>
+                    <h2>📋 เลือก Section, Group, Station</h2>
+                </div>
                 <button class="icon-button" @onclick="CloseStationPicker">✖</button>
             </header>
             <div class="modal-body">
-                <label>
-                    <span>ตัวกรองคำค้นหา</span>
+                <label class="field">
+                    <span class="field-label">ตัวกรองคำค้นหา</span>
                     <input class="input" @bind="SearchFilter" @bind:event="oninput" @bind:after="FilterStations" placeholder="กรอกคำค้นหา..." />
                 </label>
 
@@ -172,12 +193,15 @@
     <div class="modal-backdrop" @onclick="CloseWorkOrderModal">
         <div class="modal-card wide" @onclick:stopPropagation="true">
             <header class="modal-header">
-                <h2>📋 เลือก Work Order</h2>
+                <div>
+                    <p class="modal-eyebrow">เลือกข้อมูลที่ต้องการ</p>
+                    <h2>📋 เลือก Work Order</h2>
+                </div>
                 <button class="icon-button" @onclick="CloseWorkOrderModal">✖</button>
             </header>
             <div class="modal-body">
-                <label>
-                    <span>ตัวกรองคำค้นหา</span>
+                <label class="field">
+                    <span class="field-label">ตัวกรองคำค้นหา</span>
                     <input class="input" @bind="WorkOrderFilter" @bind:event="oninput" @bind:after="FilterWorkOrders" placeholder="กรอกคำค้นหา..." />
                 </label>
 
