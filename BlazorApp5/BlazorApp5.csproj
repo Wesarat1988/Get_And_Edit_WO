@@ -38,16 +38,20 @@
 		</Reference>
 	</ItemGroup>
 
-	<ItemGroup>
-		<Folder Include="Properties\" />
-		<Folder Include="wwwroot\exports\" />
-		<Folder Include="wwwroot\tools\" />
-	</ItemGroup>
+        <ItemGroup>
+                <Folder Include="Properties\" />
+                <Folder Include="wwwroot\exports\" />
+                <Folder Include="wwwroot\tools\" />
+        </ItemGroup>
 
-	<ItemGroup>
-		<Content Update="wwwroot\tools\**\*">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-			<CopyToPublishDirectory>Always</CopyToPublishDirectory>
-		</Content>
-	</ItemGroup>
+        <ItemGroup>
+                <Content Update="wwwroot\tools\**\*">
+                        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+                        <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+                </Content>
+        </ItemGroup>
+
+        <ItemGroup>
+                <ProjectReference Include="..\GetAndEditWO.UI\GetAndEditWO.UI.csproj" />
+        </ItemGroup>
 </Project>
