@@ -1,0 +1,52 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+	<PropertyGroup>
+		<!-- สร้างสำหรับ Windows โดยตรง -->
+		<TargetFramework>net8.0-windows</TargetFramework>
+		<EnableWindowsTargeting>true</EnableWindowsTargeting>
+
+		<!-- เปิด desktop APIs -->
+		<UseWindowsForms>true</UseWindowsForms>
+		<UseWPF>true</UseWPF>
+
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+	</PropertyGroup>
+
+	<!-- ดึง shared framework ฝั่ง Windows Desktop (มี WindowsBase, Forms ฯลฯ) -->
+	<ItemGroup>
+		<FrameworkReference Include="Microsoft.WindowsDesktop.App" />
+	</ItemGroup>
+
+	<!-- อ้างอิง UI Automation + WindowsBase (กรณีใช้ System.Windows.Point) -->
+	<ItemGroup>
+		<Reference Include="UIAutomationClient" />
+		<Reference Include="UIAutomationTypes" />
+		<Reference Include="WindowsBase" />
+	</ItemGroup>
+
+        <ItemGroup>
+                <PackageReference Include="Microsoft.Playwright" Version="1.55.0" />
+                <PackageReference Include="NModbus4.NetCore" Version="2.1.0" />
+                <PackageReference Include="System.IO.Ports" Version="9.0.5" />
+        </ItemGroup>
+
+	<ItemGroup>
+		<Reference Include="DeltaLibrary">
+			<HintPath>..\..\..\..\Downloads\DeltaLibrary 1.dll</HintPath>
+			<Private>True</Private>
+			<SpecificVersion>False</SpecificVersion>
+		</Reference>
+	</ItemGroup>
+
+	<ItemGroup>
+		<Folder Include="wwwroot\exports\" />
+		<Folder Include="wwwroot\tools\" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Update="wwwroot\tools\**\*">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToPublishDirectory>Always</CopyToPublishDirectory>
+		</Content>
+	</ItemGroup>
+</Project>

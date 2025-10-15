@@ -1,0 +1,578 @@
+@page "/"
+@rendermode InteractiveServer
+@inject HttpClient HttpClient
+@inject IJSRuntime JS
+@inject ILogger<BlazorApp5.Components.Pages.Index> Log
+
+@using System.Net
+@using System.Text.Json
+@using System.Linq
+@using BlazorApp5.Helpers
+
+<div class="workorder-layout">
+    <section class="card settings-card">
+        <header class="card-header">
+            <div>
+                <h1>⚙️ Work Order Settings</h1>
+                <p class="subtitle">จัดการข้อมูล Work Order ด้วยการดึงจาก MES และแก้ไขข้อมูลที่จำเป็น</p>
+            </div>
+            <div class="card-actions">
+                <button class="btn primary" @onclick="OpenGetMoModal">📥 Get MO</button>
+                <button class="btn secondary" @onclick="ToggleEditModeAsync">@(IsEditMode ? "💾 Save" : "✏️ Edit MO")</button>
+            </div>
+        </header>
+
+        <div class="form-grid">
+            <label>
+                <span>Work Order</span>
+                <input class="input" @bind="WorkOrder" @bind:event="oninput" readonly="@(!IsEditMode)" />
+            </label>
+            <label>
+                <span>Model</span>
+                <input class="input" @bind="Model" @bind:event="oninput" readonly="@(!IsEditMode)" />
+            </label>
+            <label>
+                <span>Line</span>
+                <input class="input" @bind="Line" @bind:event="oninput" readonly="@(!IsEditMode)" />
+            </label>
+            <label>
+                <span>Section</span>
+                <input class="input" @bind="Section" @bind:event="oninput" readonly="@(!IsEditMode)" />
+            </label>
+            <label>
+                <span>Group</span>
+                <input class="input" @bind="Group" @bind:event="oninput" readonly="@(!IsEditMode)" />
+            </label>
+            <label>
+                <span>Station</span>
+                <input class="input" @bind="Station" @bind:event="oninput" readonly="@(!IsEditMode)" />
+            </label>
+        </div>
+
+        @if (!string.IsNullOrWhiteSpace(StatusMessage))
+        {
+            <div class="status-message @StatusLevel">@StatusMessage</div>
+        }
+    </section>
+</div>
+
+@if (ShowGetMoModal)
+{
+    <div class="modal-backdrop" @onclick="CloseGetMoModal">
+        <div class="modal-card" @onclick:stopPropagation="true">
+            <header class="modal-header">
+                <h2>📥 ใส่ข้อมูล GetMO</h2>
+                <button class="icon-button" @onclick="CloseGetMoModal">✖</button>
+            </header>
+            <div class="modal-body">
+                <label>
+                    <span>EMP_NO</span>
+                    <input class="input" @bind="EmpNo" @bind:event="oninput" />
+                </label>
+                <label>
+                    <span>FACTORY</span>
+                    <input class="input" @bind="Factory" @bind:event="oninput" />
+                </label>
+                <label>
+                    <span>LINE_NAME</span>
+                    <input class="input" @bind="InputLine" @bind:event="oninput" />
+                </label>
+                <label>
+                    <span>GETDATA_TYPE</span>
+                    <select class="input" @bind="GetDataType">
+                        <option value="0">0 - Mean in 180 Day</option>
+                        <option value="1">1 - Mean in 7 Day</option>
+                    </select>
+                </label>
+                <label>
+                    <span>MO_TYPE</span>
+                    <select class="input" @bind="MoType">
+                        <option value="0">0 - Main Line</option>
+                        <option value="1">1 - AI/SMT</option>
+                    </select>
+                </label>
+                <label>
+                    <span>Section</span>
+                    <input class="input" @bind="Pending.Section" readonly />
+                </label>
+                <label>
+                    <span>Group</span>
+                    <input class="input" @bind="Pending.Group" readonly />
+                </label>
+                <label>
+                    <span>Station</span>
+                    <div class="input-with-button">
+                        <input class="input" @bind="Pending.Station" readonly />
+                        <button class="btn tertiary" @onclick="OpenStationPickerAsync">เลือก</button>
+                    </div>
+                </label>
+            </div>
+            <footer class="modal-footer">
+                <button class="btn secondary" @onclick="CloseGetMoModal">ยกเลิก</button>
+                <button class="btn primary" @onclick="GetMOAsync" disabled="@isLoading">@(isLoading ? "กำลังดึง..." : "✅ ดึงข้อมูล")</button>
+            </footer>
+        </div>
+    </div>
+}
+
+@if (ShowStationPicker)
+{
+    <div class="modal-backdrop" @onclick="CloseStationPicker">
+        <div class="modal-card" @onclick:stopPropagation="true">
+            <header class="modal-header">
+                <h2>📋 เลือก Section, Group, Station</h2>
+                <button class="icon-button" @onclick="CloseStationPicker">✖</button>
+            </header>
+            <div class="modal-body">
+                <label>
+                    <span>ตัวกรองคำค้นหา</span>
+                    <input class="input" @bind="SearchFilter" @bind:event="oninput" @bind:after="FilterStations" placeholder="กรอกคำค้นหา..." />
+                </label>
+
+                @if (FilteredStationList.Count > 0)
+                {
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Section</th>
+                                    <th>Group</th>
+                                    <th>Station</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var station in FilteredStationList)
+                                {
+                                    <tr>
+                                        <td>@station.Section</td>
+                                        <td>@station.Group</td>
+                                        <td>@station.Station</td>
+                                        <td class="actions">
+                                            <button class="btn primary"
+                                                    @onclick="() => SelectStation(station)"
+                                                    @onclick:stopPropagation="true">เลือก</button>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <p class="empty-state">ไม่มีข้อมูลสถานีให้เลือก</p>
+                }
+            </div>
+        </div>
+    </div>
+}
+
+@if (ShowWorkOrderModal)
+{
+    <div class="modal-backdrop" @onclick="CloseWorkOrderModal">
+        <div class="modal-card wide" @onclick:stopPropagation="true">
+            <header class="modal-header">
+                <h2>📋 เลือก Work Order</h2>
+                <button class="icon-button" @onclick="CloseWorkOrderModal">✖</button>
+            </header>
+            <div class="modal-body">
+                <label>
+                    <span>ตัวกรองคำค้นหา</span>
+                    <input class="input" @bind="WorkOrderFilter" @bind:event="oninput" @bind:after="FilterWorkOrders" placeholder="กรอกคำค้นหา..." />
+                </label>
+
+                @if (FilteredMoList.Count > 0)
+                {
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Work Order</th>
+                                    <th>Model</th>
+                                    <th>Line</th>
+                                    <th>Plan Start</th>
+                                    <th>Plan End</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var mo in FilteredMoList)
+                                {
+                                    <tr>
+                                        <td>@mo.WorkOrder</td>
+                                        <td>@mo.Model</td>
+                                        <td>@mo.Line</td>
+                                        <td>@mo.PlanStart</td>
+                                        <td>@mo.PlanEnd</td>
+                                        <td class="actions">
+                                            <button class="btn primary"
+                                                    @onclick="() => SelectWorkOrder(mo)"
+                                                    @onclick:stopPropagation="true">เลือก</button>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <p class="empty-state">ไม่มีข้อมูล Work Order ให้เลือก</p>
+                }
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private const string tokenID = "894A0F0DF8494799E0530CCA940AC604";
+    private const string secretKey = "894A0F0DF84A4799E0530CCA940AC604";
+
+    private bool IsEditMode { get; set; }
+    private bool ShowGetMoModal { get; set; }
+    private bool ShowStationPicker { get; set; }
+    private bool ShowWorkOrderModal { get; set; }
+    private bool isLoading;
+
+    private string StatusMessage { get; set; } = string.Empty;
+    private string StatusLevel { get; set; } = "info";
+
+    private string WorkOrder { get; set; } = string.Empty;
+    private string Model { get; set; } = string.Empty;
+    private string Line { get; set; } = string.Empty;
+    private string Section { get; set; } = string.Empty;
+    private string Group { get; set; } = string.Empty;
+    private string Station { get; set; } = string.Empty;
+
+    private string EmpNo { get; set; } = string.Empty;
+    private string Factory { get; set; } = "DET6";
+    private string InputLine { get; set; } = string.Empty;
+    private string GetDataType { get; set; } = "0";
+    private string MoType { get; set; } = "0";
+
+    private string SearchFilter { get; set; } = string.Empty;
+    private string WorkOrderFilter { get; set; } = string.Empty;
+
+    private PendingMoConfig Pending { get; } = new();
+    private List<StationInfo> StationList { get; } = new();
+    private List<StationInfo> FilteredStationList { get; set; } = new();
+    private List<WorkOrderEntry> MoResults { get; set; } = new();
+    private List<WorkOrderEntry> FilteredMoList { get; set; } = new();
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        InputLine = Line;
+    }
+
+    private void OpenGetMoModal()
+    {
+        Pending.WorkOrder = WorkOrder;
+        Pending.Model = Model;
+        Pending.Line = string.IsNullOrWhiteSpace(InputLine) ? Line : InputLine;
+        Pending.Section = Section;
+        Pending.Group = Group;
+        Pending.Station = Station;
+
+        if (string.IsNullOrWhiteSpace(InputLine) && !string.IsNullOrWhiteSpace(Line))
+        {
+            InputLine = Line;
+        }
+
+        ShowGetMoModal = true;
+        SetStatus(string.Empty, "info");
+    }
+
+    private async Task ToggleEditModeAsync()
+    {
+        if (!IsEditMode)
+        {
+            IsEditMode = true;
+            return;
+        }
+
+        IsEditMode = false;
+        await SaveWorkOrderSettingsAsync();
+    }
+
+    private Task SaveWorkOrderSettingsAsync()
+    {
+        SetStatus("บันทึกข้อมูล Work Order เรียบร้อย", "success");
+        return Task.CompletedTask;
+    }
+
+    private void CloseGetMoModal()
+    {
+        ShowGetMoModal = false;
+    }
+
+    private async Task GetMOAsync()
+    {
+        if (string.IsNullOrWhiteSpace(EmpNo) || string.IsNullOrWhiteSpace(Factory) || string.IsNullOrWhiteSpace(InputLine))
+        {
+            await JS.InvokeVoidAsync("alert", "⚠️ กรุณากรอก EMP_NO, FACTORY และ LINE_NAME ให้ครบก่อนดึงข้อมูล");
+            return;
+        }
+
+        isLoading = true;
+        SetStatus("กำลังดึงข้อมูลจาก MES...", "info");
+
+        try
+        {
+            WorkOrderFilter = string.Empty;
+            MoResults = await FetchWorkOrdersFromMesAsync();
+            FilterWorkOrders();
+
+            if (FilteredMoList.Count > 0)
+            {
+                ShowWorkOrderModal = true;
+                ShowGetMoModal = false;
+                SetStatus($"พบ {FilteredMoList.Count} Work Order", "success");
+            }
+            else
+            {
+                await JS.InvokeVoidAsync("alert", "⚠️ ไม่พบข้อมูล Work Order จาก MES");
+                SetStatus("ไม่พบข้อมูล Work Order", "warning");
+            }
+        }
+        catch (Exception ex)
+        {
+            Log.LogWarning(ex, "Failed to fetch Work Orders from MES");
+            await JS.InvokeVoidAsync("alert", $"❌ ไม่สามารถดึงข้อมูลได้: {ex.Message}");
+            SetStatus("เกิดข้อผิดพลาดในการดึงข้อมูล MES", "error");
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task<List<WorkOrderEntry>> FetchWorkOrdersFromMesAsync()
+    {
+        string param = $"EMP_NO{EmpNo}FACTORY{Factory}GETDATA_TYPE{GetDataType}LINE_NAME{InputLine}MO_TYPE{MoType}";
+        string sign = MD5Helper.Generate(secretKey + param);
+
+        var url =
+            $"http://THWGRMESEP01.deltaww.com:10101/QueryData/MOList" +
+            $"?EMP_NO={Uri.EscapeDataString(EmpNo ?? string.Empty)}" +
+            $"&FACTORY={Uri.EscapeDataString(Factory ?? string.Empty)}" +
+            $"&GETDATA_TYPE={Uri.EscapeDataString(GetDataType ?? "0")}" +
+            $"&LINE_NAME={Uri.EscapeDataString(InputLine ?? string.Empty)}" +
+            $"&MO_TYPE={Uri.EscapeDataString(MoType ?? "0")}" +
+            $"&sign={sign}";
+
+        using var req = new HttpRequestMessage(HttpMethod.Get, url);
+        req.Headers.TryAddWithoutValidation("TokenID", tokenID);
+
+        using var res = await HttpClient.SendAsync(req);
+        if (res.StatusCode == HttpStatusCode.Unauthorized)
+        {
+            throw new InvalidOperationException("MES unauthorized (401)");
+        }
+
+        res.EnsureSuccessStatusCode();
+
+        var payload = await res.Content.ReadAsStringAsync();
+        using var json = JsonDocument.Parse(payload);
+        var root = json.RootElement;
+
+        if (!root.TryGetProperty("Result", out var resultProp) ||
+            !string.Equals(resultProp.GetString(), "OK", StringComparison.OrdinalIgnoreCase))
+        {
+            return new List<WorkOrderEntry>();
+        }
+
+        if (!root.TryGetProperty("Message", out var messages) || messages.ValueKind != JsonValueKind.Array)
+        {
+            return new List<WorkOrderEntry>();
+        }
+
+        var list = new List<WorkOrderEntry>();
+        foreach (var item in messages.EnumerateArray())
+        {
+            var line = item.TryGetProperty("LINE_NAME", out var lineProp) ? lineProp.GetString() : null;
+            if (!string.Equals(line?.Trim(), InputLine?.Trim(), StringComparison.OrdinalIgnoreCase))
+            {
+                continue;
+            }
+
+            list.Add(new WorkOrderEntry
+            {
+                WorkOrder = item.TryGetProperty("MO_NUMBER", out var mo) ? mo.GetString() ?? string.Empty : string.Empty,
+                Model = item.TryGetProperty("MODEL_NAME", out var model) ? model.GetString() ?? string.Empty : string.Empty,
+                Line = line ?? string.Empty,
+                PlanStart = item.TryGetProperty("PLAN_START_DATE", out var planStart) ? planStart.GetString() ?? string.Empty : string.Empty,
+                PlanEnd = item.TryGetProperty("PLAN_END_DATE", out var planEnd) ? planEnd.GetString() ?? string.Empty : string.Empty
+            });
+        }
+
+        return list;
+    }
+
+    private async Task OpenStationPickerAsync()
+    {
+        if (string.IsNullOrWhiteSpace(EmpNo) || string.IsNullOrWhiteSpace(Factory) || string.IsNullOrWhiteSpace(InputLine))
+        {
+            await JS.InvokeVoidAsync("alert", "⚠️ กรุณากรอก EMP_NO, FACTORY และ LINE_NAME ให้ครบก่อนเลือก Station");
+            return;
+        }
+
+        try
+        {
+            SearchFilter = string.Empty;
+            await LoadStationsFromMesAsync();
+            FilterStations();
+            ShowStationPicker = true;
+        }
+        catch (Exception ex)
+        {
+            Log.LogWarning(ex, "Failed to fetch stations from MES");
+            await JS.InvokeVoidAsync("alert", $"❌ ไม่สามารถดึงข้อมูลสถานีได้: {ex.Message}");
+        }
+    }
+
+    private async Task LoadStationsFromMesAsync()
+    {
+        string param = $"EMP_NO{EmpNo}FACTORY{Factory}LINE_NAME{InputLine}";
+        string sign = MD5Helper.Generate(secretKey + param);
+
+        var url =
+            $"http://THWGRMESEP01.deltaww.com:10101/QueryData/LineInfo" +
+            $"?EMP_NO={Uri.EscapeDataString(EmpNo ?? string.Empty)}" +
+            $"&FACTORY={Uri.EscapeDataString(Factory ?? string.Empty)}" +
+            $"&LINE_NAME={Uri.EscapeDataString(InputLine ?? string.Empty)}" +
+            $"&sign={sign}";
+
+        using var req = new HttpRequestMessage(HttpMethod.Get, url);
+        req.Headers.TryAddWithoutValidation("TokenID", tokenID);
+
+        using var res = await HttpClient.SendAsync(req);
+        if (res.StatusCode == HttpStatusCode.Unauthorized)
+        {
+            throw new InvalidOperationException("MES unauthorized (401)");
+        }
+
+        res.EnsureSuccessStatusCode();
+
+        var payload = await res.Content.ReadAsStringAsync();
+        using var json = JsonDocument.Parse(payload);
+        var root = json.RootElement;
+
+        if (!root.TryGetProperty("Result", out var resultProp) ||
+            !string.Equals(resultProp.GetString(), "OK", StringComparison.OrdinalIgnoreCase))
+        {
+            StationList.Clear();
+            FilteredStationList = new List<StationInfo>();
+            return;
+        }
+
+        if (!root.TryGetProperty("Message", out var messages) || messages.ValueKind != JsonValueKind.Array)
+        {
+            StationList.Clear();
+            FilteredStationList = new List<StationInfo>();
+            return;
+        }
+
+        StationList.Clear();
+        foreach (var item in messages.EnumerateArray())
+        {
+            StationList.Add(new StationInfo
+            {
+                Line = InputLine,
+                Section = item.TryGetProperty("SECTION_NAME", out var section) ? section.GetString() ?? string.Empty : string.Empty,
+                Group = item.TryGetProperty("GROUP_NAME", out var group) ? group.GetString() ?? string.Empty : string.Empty,
+                Station = item.TryGetProperty("STATION_NAME", out var station) ? station.GetString() ?? string.Empty : string.Empty
+            });
+        }
+    }
+
+    private void FilterStations()
+    {
+        FilteredStationList = string.IsNullOrWhiteSpace(SearchFilter)
+            ? StationList.ToList()
+            : StationList.Where(s =>
+                (s.Section ?? string.Empty).Contains(SearchFilter, StringComparison.CurrentCultureIgnoreCase) ||
+                (s.Group ?? string.Empty).Contains(SearchFilter, StringComparison.CurrentCultureIgnoreCase) ||
+                (s.Station ?? string.Empty).Contains(SearchFilter, StringComparison.CurrentCultureIgnoreCase))
+            .ToList();
+    }
+
+    private void FilterWorkOrders()
+    {
+        FilteredMoList = string.IsNullOrWhiteSpace(WorkOrderFilter)
+            ? MoResults.ToList()
+            : MoResults.Where(m =>
+                (m.WorkOrder ?? string.Empty).Contains(WorkOrderFilter, StringComparison.CurrentCultureIgnoreCase) ||
+                (m.Model ?? string.Empty).Contains(WorkOrderFilter, StringComparison.CurrentCultureIgnoreCase) ||
+                (m.Line ?? string.Empty).Contains(WorkOrderFilter, StringComparison.CurrentCultureIgnoreCase))
+            .ToList();
+    }
+
+    private void CloseStationPicker()
+    {
+        ShowStationPicker = false;
+    }
+
+    private void CloseWorkOrderModal()
+    {
+        ShowWorkOrderModal = false;
+    }
+
+    private void SelectStation(StationInfo station)
+    {
+        Pending.Section = station.Section ?? string.Empty;
+        Pending.Group = station.Group ?? string.Empty;
+        Pending.Station = station.Station ?? string.Empty;
+        ShowStationPicker = false;
+    }
+
+    private void SelectWorkOrder(WorkOrderEntry entry)
+    {
+        WorkOrder = entry.WorkOrder;
+        Model = entry.Model;
+        Line = entry.Line;
+        Section = Pending.Section;
+        Group = Pending.Group;
+        Station = Pending.Station;
+        InputLine = entry.Line;
+
+        ShowWorkOrderModal = false;
+        ShowGetMoModal = false;
+
+        SetStatus($"เลือก Work Order {WorkOrder} เรียบร้อย", "success");
+    }
+
+    private void SetStatus(string message, string level)
+    {
+        StatusMessage = message;
+        StatusLevel = string.IsNullOrWhiteSpace(level) ? "info" : level;
+    }
+
+    private sealed class PendingMoConfig
+    {
+        public string WorkOrder { get; set; } = string.Empty;
+        public string Model { get; set; } = string.Empty;
+        public string Line { get; set; } = string.Empty;
+        public string Section { get; set; } = string.Empty;
+        public string Group { get; set; } = string.Empty;
+        public string Station { get; set; } = string.Empty;
+    }
+
+    private sealed class StationInfo
+    {
+        public string Line { get; set; } = string.Empty;
+        public string Section { get; set; } = string.Empty;
+        public string Group { get; set; } = string.Empty;
+        public string Station { get; set; } = string.Empty;
+    }
+
+    private sealed class WorkOrderEntry
+    {
+        public string WorkOrder { get; set; } = string.Empty;
+        public string Model { get; set; } = string.Empty;
+        public string Line { get; set; } = string.Empty;
+        public string PlanStart { get; set; } = string.Empty;
+        public string PlanEnd { get; set; } = string.Empty;
+    }
+}

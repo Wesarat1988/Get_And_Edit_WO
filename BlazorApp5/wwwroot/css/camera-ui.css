@@ -1,0 +1,393 @@
+﻿/* ---------------- Result Card (clean) ---------------- */
+.card-result {
+    background: rgba(255,255,255,.95);
+    backdrop-filter: blur(20px);
+    border-radius: 24px;
+    padding: 32px;
+    border: 1px solid rgba(255,255,255,.2);
+    box-shadow: 0 20px 60px rgba(0,0,0,.08);
+    margin-top: 16px;
+}
+
+.result-section {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+/* แถบสถานะ */
+.result-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 28px;
+    border-radius: 20px;
+    font-weight: 700;
+    position: relative;
+    overflow: hidden;
+    min-width: 200px;
+}
+
+    .result-status::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        left: -100%;
+        background: linear-gradient(90deg,transparent,rgba(255,255,255,.35),transparent);
+        transition: left .6s ease;
+    }
+
+    .result-status:hover::before {
+        left: 100%;
+    }
+
+.result-waiting {
+    background: linear-gradient(135deg,#ffecd2,#fcb69f);
+    color: #8b4513;
+    box-shadow: 0 8px 32px rgba(252,182,159,.35);
+}
+
+.result-pass {
+    background: linear-gradient(135deg,#a8edea,#fed6e3);
+    color: #065f46;
+    box-shadow: 0 8px 32px rgba(168,237,234,.35);
+    animation: pulse-success 2s infinite;
+}
+
+.result-fail {
+    background: linear-gradient(135deg,#ffecd2,#fcb69f);
+    color: #dc2626;
+    box-shadow: 0 8px 32px rgba(252,182,159,.35);
+    animation: shake .5s ease-in-out;
+}
+
+.result-alert {
+    background: linear-gradient(135deg,#fef3c7,#fde68a);
+    color: #92400e;
+    box-shadow: 0 8px 32px rgba(251,191,36,.35);
+    animation: pulse-alert 1.8s ease-in-out infinite;
+}
+
+.result-alert.result-need-wo {
+    background: linear-gradient(135deg,#fef08a,#facc15);
+    color: #854d0e;
+    box-shadow: 0 8px 32px rgba(250,204,21,.38);
+}
+
+.result-alert.result-conflict {
+    background: linear-gradient(135deg,#fde68a,#f97316);
+    color: #7c2d12;
+    box-shadow: 0 8px 32px rgba(249,115,22,.32);
+}
+
+.result-alert.result-disconnected {
+    background: linear-gradient(135deg,#fee2e2,#fecaca);
+    color: #991b1b;
+    box-shadow: 0 8px 32px rgba(254,202,202,.35);
+}
+
+.status-dot-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+}
+
+.status-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    display: inline-block;
+    box-shadow: 0 0 0 0 rgba(0,0,0,.08);
+    transition: transform .3s ease, box-shadow .3s ease;
+}
+
+.status-dot.pass {
+    background: linear-gradient(135deg,#34d399,#10b981);
+    box-shadow: 0 0 0 4px rgba(16,185,129,.25);
+}
+
+.status-dot.fail {
+    background: linear-gradient(135deg,#f87171,#ef4444);
+    box-shadow: 0 0 0 4px rgba(239,68,68,.25);
+}
+
+.status-dot.waiting {
+    background: rgba(255,255,255,.7);
+    box-shadow: 0 0 0 4px rgba(255,255,255,.25);
+    animation: pulse-wait 1.6s ease-in-out infinite;
+}
+
+.status-dot.alert {
+    background: linear-gradient(135deg,#fcd34d,#f59e0b);
+    box-shadow: 0 0 0 4px rgba(245,158,11,.3);
+    animation: pulse-alert 1.6s ease-in-out infinite;
+}
+
+.status-dot.alert.need-wo {
+    background: linear-gradient(135deg,#facc15,#eab308);
+    box-shadow: 0 0 0 4px rgba(234,179,8,.32);
+}
+
+.status-dot.alert.conflict {
+    background: linear-gradient(135deg,#fb923c,#f97316);
+    box-shadow: 0 0 0 4px rgba(249,115,22,.3);
+}
+
+.status-dot.alert.disconnected {
+    background: linear-gradient(135deg,#fca5a5,#f87171);
+    box-shadow: 0 0 0 4px rgba(248,113,113,.3);
+}
+
+.result-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,255,255,.35);
+    font-size: 20px;
+}
+
+.result-status .result-hint {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    margin-top: 6px;
+    color: inherit;
+    opacity: .9;
+}
+
+/* meta */
+.result-meta {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    color: #6b7280;
+    font-size: 14px;
+    font-weight: 500;
+    margin-top: 10px;
+}
+
+.meta-pill {
+    background: rgba(107,114,128,.12);
+    padding: 6px 12px;
+    border-radius: 12px;
+    font: 12px/1.2 ui-monospace,Consolas,monospace;
+}
+
+.meta-dot {
+    color: #d1d5db;
+    font-weight: 700;
+}
+
+.meta-time {
+    font: 12px/1.2 ui-monospace,Consolas,monospace;
+}
+
+.result-qr {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    margin-top: 18px;
+    color: #6b7280;
+}
+
+.result-qr .qr-label {
+    font-size: 12px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.result-qr .qr-pill {
+    background: rgba(107,114,128,.14);
+    padding: 10px 18px;
+    border-radius: 16px;
+    font: 14px/1.4 ui-monospace,Consolas,monospace;
+    color: #111827;
+    box-shadow: inset 0 0 0 1px rgba(107,114,128,.18);
+    max-width: 100%;
+    word-break: break-word;
+}
+
+.result-qr .qr-pill.empty {
+    color: #9ca3af;
+    background: rgba(229,231,235,.6);
+    box-shadow: inset 0 0 0 1px rgba(148,163,184,.25);
+}
+
+.result-qr .qr-meta {
+    font: 12px/1.2 ui-monospace,Consolas,monospace;
+    color: #4b5563;
+}
+
+/* KPI ของการ์ด (ตั้งชื่อให้ไม่ชน) */
+.result-kpis {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 16px;
+}
+
+.result-kpi {
+    background: rgba(255,255,255,.7);
+    border-radius: 16px;
+    padding: 20px;
+    text-align: center;
+    transition: transform .25s, box-shadow .25s, border-color .25s;
+    border: 2px solid transparent;
+    position: relative;
+    overflow: hidden;
+}
+
+    .result-kpi::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+    }
+
+    .result-kpi:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 40px rgba(0,0,0,.08);
+        border-color: currentColor;
+    }
+
+    .result-kpi.pass {
+        color: #059669;
+    }
+
+        .result-kpi.pass::before {
+            background: linear-gradient(90deg,#10b981,#34d399);
+        }
+
+        .result-kpi.pass:hover {
+            background: rgba(16,185,129,.05);
+        }
+
+    .result-kpi.fail {
+        color: #dc2626;
+    }
+
+        .result-kpi.fail::before {
+            background: linear-gradient(90deg,#ef4444,#f87171);
+        }
+
+        .result-kpi.fail:hover {
+            background: rgba(239,68,68,.05);
+        }
+
+.kpi-label {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    opacity: .8;
+    margin-bottom: 8px;
+}
+
+.kpi-value {
+    font-size: 32px;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 4px;
+}
+
+.kpi-change {
+    font-size: 11px;
+    opacity: .6;
+}
+
+/* animations + loading */
+@keyframes pulse-success {
+    0%,100% {
+        transform: scale(1)
+    }
+
+    50% {
+        transform: scale(1.05)
+    }
+}
+
+@keyframes shake {
+    0%,100% {
+        transform: translateX(0)
+    }
+
+    25% {
+        transform: translateX(-5px)
+    }
+
+    75% {
+        transform: translateX(5px)
+    }
+}
+
+@keyframes pulse-wait {
+    0%,100% {
+        transform: scale(1);
+        opacity: .85;
+    }
+
+    50% {
+        transform: scale(0.75);
+        opacity: .45;
+    }
+}
+
+@keyframes pulse-alert {
+    0%,100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.15);
+    }
+}
+
+.loading-dots {
+    display: inline-flex;
+    gap: 4px;
+    margin-left: 6px;
+}
+
+.loading-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+    animation: ld 1.4s infinite ease-in-out;
+}
+
+    .loading-dot:nth-child(2) {
+        animation-delay: .16s
+    }
+
+    .loading-dot:nth-child(3) {
+        animation-delay: .32s
+    }
+
+@keyframes ld {
+    0%,80%,100% {
+        opacity: 0
+    }
+
+    40% {
+        opacity: 1
+    }
+}
+
+/* responsive */
+@media (max-width:480px) {
+    .card-result {
+        padding: 24px
+    }
+
+    .kpi-value {
+        font-size: 28px
+    }
+}

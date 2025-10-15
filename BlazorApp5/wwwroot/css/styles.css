@@ -1,0 +1,453 @@
+﻿/* ============ Variables ============ */
+:root {
+    --brand: #2563eb;
+    --brand-dark: #1d4ed8;
+    --ok: #10b981;
+    --danger: #ef4444;
+    --text: #111827;
+    --text-dim: #6b7280;
+    --border: #e5e7eb;
+    --bg: #f7f8fb;
+    --card: #ffffff;
+    --shadow: 0 10px 30px rgba(27,39,51,.05);
+    --radius: 14px;
+}
+
+/* ============ Base ============ */
+html, body {
+    background: var(--bg);
+    color: var(--text);
+}
+
+* {
+    box-sizing: border-box
+}
+
+body {
+    font-family: ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Ubuntu,Inter,Arial;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 24px auto;
+    padding: 0 16px 56px;
+}
+
+/* ============ Toolbar ============ */
+.toolbar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px
+}
+
+.title {
+    font-weight: 800;
+    font-size: 26px;
+    letter-spacing: .2px
+}
+
+.chip {
+    font-size: .85rem;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: #eef2ff;
+    color: #334155;
+    border: 1px solid #e6e9ff;
+}
+
+/* ============ Cards ============ */
+.card {
+    background: var(--card);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    padding: 18px;
+    margin-bottom: 16px;
+}
+
+    .card h3 {
+        margin: 0 0 10px;
+        font-size: 18px;
+        font-weight: 700;
+        display: flex;
+        gap: 8px
+    }
+
+/* ============ Form (คลาสของเราเอง) ============ */
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px
+}
+
+.form-row {
+    display: flex;
+    flex-direction: column;
+    gap: 6px
+}
+
+.label {
+    font-size: .9rem;
+    color: #475569
+}
+
+.input {
+    width: 100%;
+    border: 1px solid var(--border);
+    background: #eff3f8;
+    border-radius: 10px;
+    padding: 12px 12px;
+    outline: none;
+}
+
+/* ============ Trigger / KPI ============ */
+.
+{
+    display: flex;
+    align-items: center;
+    gap: 12px
+}
+/* ปรับ “ขนาด” ปุ่มโดยไม่แตะสี Bootstrap */
+.btn.big {
+    padding: 10px 18px;
+    font-size: 1.05rem;
+    border-radius: 12px
+}
+
+.kpis {
+    display: flex;
+    gap: 10px
+}
+
+.kpi {
+    min-width: 120px;
+    padding: 10px 12px;
+    border-radius: 12px;
+    background: #f9fafb;
+    border: 1px solid var(--border);
+}
+
+    .kpi .hint {
+        font-size: .78rem;
+        color: #64748b;
+        margin-bottom: 6px
+    }
+
+    .kpi.pass strong {
+        color: #16a34a
+    }
+
+    .kpi.fail strong {
+        color: #dc2626
+    }
+
+/* ============ Logs / Table ============ */
+.log {
+    white-space: pre-wrap;
+    font-family: ui-monospace,Menlo,Consolas,monospace;
+    font-size: .9rem;
+    background: #0b1220;
+    color: #d1e7ff;
+    border-radius: 10px;
+    padding: 12px;
+    border: 1px solid #0f1a33;
+    min-height: 130px;
+}
+
+table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: .95rem
+}
+
+thead th {
+    text-align: left;
+    padding: 10px 12px;
+    color: #475569;
+    background: #f1f5f9;
+    border-top: 1px solid var(--border)
+}
+
+tbody td {
+    padding: 10px 12px;
+    border-top: 1px solid var(--border)
+}
+
+/* ============ Utility ============ */
+.mb-2 {
+    margin-bottom: .5rem
+}
+
+/* ============ Optional: ปุ่ม/ป้าย custom (namespace แยก) ============ */
+.x-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: .45rem 1rem;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: .95rem;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: .2s
+}
+
+.x-btn-primary {
+    background: var(--brand);
+    color: #fff
+}
+
+    .x-btn-primary:hover {
+        background: var(--brand-dark)
+    }
+
+.x-btn-ghost {
+    background: #fff;
+    border: 1px solid var(--border);
+    color: var(--text)
+}
+
+    .x-btn-ghost:hover {
+        background: #f3f4f6
+    }
+
+.x-badge {
+    display: inline-block;
+    font-weight: 700;
+    font-size: .8rem;
+    padding: .25rem .6rem;
+    border-radius: 9999px;
+    line-height: 1.2
+}
+
+.x-badge-pass {
+    background: #d1fae5;
+    color: #065f46
+}
+
+.x-badge-fail {
+    background: #fee2e2;
+    color: #991b1b
+}
+
+.x-badge-unknown {
+    background: #fef9c3;
+    color: #92400e
+}
+
+/* ⚠️ ไม่มี .btn{}, .badge{} ที่จะไปทับ Bootstrap */
+
+/* Safety reset for outline buttons (avoid custom .btn color leaks) */
+.btn-outline-primary {
+    color: var(--bs-primary) !important;
+    border-color: var(--bs-primary) !important;
+}
+
+.btn-outline-secondary {
+    color: var(--bs-secondary) !important;
+    border-color: var(--bs-secondary) !important;
+}
+
+.btn-outline-success {
+    color: var(--bs-success) !important;
+    border-color: var(--bs-success) !important;
+}
+
+.btn-outline-danger {
+    color: var(--bs-danger) !important;
+    border-color: var(--bs-danger) !important;
+}
+
+/* ===== Modal ===== */
+.x-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(2,6,23,.45);
+    display: grid;
+    place-items: center;
+    z-index: 2000;
+    outline: none;
+}
+
+.x-modal {
+    width: min(760px,92vw);
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    box-shadow: 0 24px 64px rgba(15,23,42,.25);
+    overflow: hidden;
+    animation: modal-in .12s ease-out;
+}
+
+@keyframes modal-in {
+    from {
+        transform: translateY(6px);
+        opacity: .92
+    }
+
+    to {
+        transform: none;
+        opacity: 1
+    }
+}
+
+.x-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    border-bottom: 1px solid #e5e7eb;
+    background: linear-gradient(180deg,#f8fafc,#f1f5f9)
+}
+
+.x-modal-close {
+    border: 0;
+    background: transparent;
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+    color: #475569;
+    padding: 6px;
+    border-radius: 8px
+}
+
+    .x-modal-close:hover {
+        background: #f1f5f9
+    }
+
+.x-modal-body {
+    padding: 16px;
+    max-height: 72vh;
+    overflow: auto
+}
+
+.x-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: 12px 16px;
+    border-top: 1px solid #e5e7eb;
+    background: #f8fafc
+}
+
+/* Modal overlay */
+.x-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(15,23,42,.45);
+    display: grid;
+    place-items: center;
+    z-index: 1060;
+}
+
+.x-modal {
+    width: min(720px, 92vw);
+    max-height: min(85vh, 900px);
+    overflow: auto;
+    background: #fff;
+    border-radius: 16px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 25px 60px rgba(2,6,23,.35);
+}
+
+.x-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 18px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.x-modal-title {
+    font-weight: 700;
+    font-size: 1.05rem;
+}
+
+.x-modal-close {
+    appearance: none;
+    border: 0;
+    background: transparent;
+    font-size: 20px;
+    line-height: 1;
+    padding: 4px 8px;
+    cursor: pointer;
+}
+
+.x-modal-body {
+    padding: 16px 18px;
+}
+
+.x-modal-footer {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    padding: 12px 18px;
+    border-top: 1px solid #e5e7eb;
+}
+
+.x-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(15,23,42,.45);
+    display: grid;
+    place-items: center;
+    z-index: 1060
+}
+
+.x-modal {
+    width: min(720px,92vw);
+    max-height: min(85vh,900px);
+    overflow: auto;
+    background: #fff;
+    border-radius: 16px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 25px 60px rgba(2,6,23,.35)
+}
+
+.x-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 18px;
+    border-bottom: 1px solid #e5e7eb
+}
+
+.x-modal-title {
+    font-weight: 700;
+    font-size: 1.05rem
+}
+
+.x-modal-close {
+    appearance: none;
+    border: 0;
+    background: transparent;
+    font-size: 20px;
+    line-height: 1;
+    padding: 4px 8px;
+    cursor: pointer
+}
+
+.x-modal-body {
+    padding: 16px 18px
+}
+
+.x-modal-footer {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    padding: 12px 18px;
+    border-top: 1px solid #e5e7eb
+}
+
+.card.log-pass {
+    background: #ecfdf5; /* เขียวอ่อน */
+    border-left: 6px solid #22c55e; /* เขียว */
+}
+
+.card.log-fail {
+    background: #fef2f2; /* แดงอ่อน */
+    border-left: 6px solid #ef4444; /* แดง */
+}

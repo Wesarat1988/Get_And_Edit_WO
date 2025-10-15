@@ -1,0 +1,8 @@
+{
+  "Enabled": true,
+  "ExePath": "tools/Clicker.exe",
+  "TargetX": 708,
+  "TargetY": 721,
+  "FocusClick": true,
+  "DpiScale": 1.25
+}

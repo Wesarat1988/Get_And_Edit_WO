@@ -1,0 +1,63 @@
+﻿@page "/query-mes"
+@inject HttpClient Http
+@rendermode InteractiveServer
+@using BlazorApp5.Services
+
+
+<h3>🔍 Query MO List</h3>
+
+@* <button @onclick="QueryMOListAsync" class="btn btn-primary">Load MO List</button> *@
+
+@if (!string.IsNullOrEmpty(signResult))
+{
+    <div class="alert alert-info mt-3">
+        <strong>MD5 Sign:</strong> <code>@signResult</code>
+    </div>
+}
+
+@* @if (moList?.Any() == true)
+{
+    <ul class="mt-3">
+        @foreach (var item in moList)
+        {
+            <li>@item.MO_NUMBER - @item.MODEL_NAME - @item.LINE_NAME</li>
+        }
+    </ul>
+} *@
+
+<button @onclick="GenerateOnly">🔐 Generate Sign</button>
+
+@if (!string.IsNullOrEmpty(signResult))
+{
+    <p><strong>MD5:</strong> @signResult</p>
+}
+
+@code {
+    private string signResult = "";
+
+    private void GenerateOnly()
+    {
+        signResult = GenerateMD5Sign();
+    }
+
+    private string GenerateMD5Sign()
+    {
+        string empNo = "86347852";
+        string factory = "DET6";
+        string getType = "1";
+        string line = "F24";
+        string moType = "0";
+        string secret = "894A0F0DF84A4799E0530CCA940AC604";
+
+        var raw = $"EMP_NO{empNo}FACTORY{factory}GETDATA_TYPE{getType}LINE_NAME{line}MO_TYPE{moType}";
+
+        var toHash = secret + raw;
+
+        using var md5 = System.Security.Cryptography.MD5.Create();
+        byte[] bytes = System.Text.Encoding.UTF8.GetBytes(toHash);
+        string md5Result = string.Concat(md5.ComputeHash(bytes).Select(b => b.ToString("X2")));
+
+
+        return md5Result;
+    }
+}

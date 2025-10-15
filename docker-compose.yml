@@ -1,0 +1,6 @@
+services:
+  blazorapp5:
+    image: ${DOCKER_REGISTRY-}blazorapp5
+    build:
+      context: .
+      dockerfile: BlazorApp5/Dockerfile

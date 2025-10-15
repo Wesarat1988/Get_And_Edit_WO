@@ -1,0 +1,32 @@
+@page "/"
+@namespace BlazorApp5.Pages
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@using Microsoft.AspNetCore.Components.Web
+@using BlazorApp5
+@using BlazorApp5.Components
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <base href="~/" />
+
+  <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="app.css" />
+  <link rel="stylesheet" href="BlazorApp5.styles.css" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/camera-ui.css?v=3" />
+  <link rel="icon" type="image/png" href="favicon.png" />
+  <component type="typeof(HeadOutlet)" render-mode="ServerPrerendered" />
+</head>
+<body>
+  <component type="typeof(App)" render-mode="ServerPrerendered" />
+
+  <script src="js/localStorageHelper.js" defer></script>
+  <script src="js/downloadHelper.js" defer></script>
+  <script src="js/controller.js" defer></script>
+  <script src="js/scripts.js" defer></script>
+  <script src="_framework/blazor.server.js"></script>
+  <script src="bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

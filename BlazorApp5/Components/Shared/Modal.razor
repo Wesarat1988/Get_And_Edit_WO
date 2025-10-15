@@ -1,0 +1,33 @@
+﻿<div class="x-modal-backdrop" @onclick="HandleBackdropClick">
+    <div class="x-modal" tabindex="0"
+         @onkeydown="HandleKeyDown"
+    @onclick:stopPropagation>
+        <div class="x-modal-header">
+            <div class="x-modal-title">@Title</div>
+            <button type="button" class="x-modal-close" title="Close" @onclick="CloseAsync">✕</button>
+        </div>
+
+        <div class="x-modal-body">
+            @ChildContent
+        </div>
+
+        @if (Footer is not null)
+        {
+            <div class="x-modal-footer">
+                @Footer
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter] public string Title { get; set; } = "";
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+    [Parameter] public RenderFragment? Footer { get; set; }
+    [Parameter] public EventCallback OnClose { get; set; }
+
+    private Task CloseAsync(MouseEventArgs _) => OnClose.InvokeAsync();
+    private Task HandleBackdropClick(MouseEventArgs _) => OnClose.InvokeAsync();
+    private Task HandleKeyDown(KeyboardEventArgs e)
+        => e.Key is "Escape" ? OnClose.InvokeAsync() : Task.CompletedTask;
+}
