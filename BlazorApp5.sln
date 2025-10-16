@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.13.35913.81
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorApp5", "BlazorApp5\BlazorApp5.csproj", "{D1519012-22AF-4DB3-9A04-68B50E0F7A52}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GetWorkOrder", "BlazorApp5\GetWorkOrder.csproj", "{D1519012-22AF-4DB3-9A04-68B50E0F7A52}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GetAndEditWO.UI", "GetAndEditWO.UI\GetAndEditWO.UI.csproj", "{49A6D4A0-DA38-4129-A8C7-AEFCA8A284AD}"
 EndProject
