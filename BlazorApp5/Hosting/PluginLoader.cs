@@ -87,9 +87,13 @@ public static class PluginLoader
             return;
         }
 
-        if (manifest is null || !manifest.TryValidate(out var validationError))
+        string? validationError = manifest is null ? "Manifest could not be parsed." : null;
+        if (manifest is null || !manifest.TryValidate(out validationError))
         {
-            logger.LogWarning("Invalid plugin manifest at '{ManifestPath}': {Error}", manifestPath, validationError ?? "Unknown error");
+            logger.LogWarning(
+                "Invalid plugin manifest at '{ManifestPath}': {Error}",
+                manifestPath,
+                validationError ?? "Unknown error");
             return;
         }
 
