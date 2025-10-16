@@ -1,9 +1,12 @@
+using System;
 using System.CodeDom.Compiler;
+using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using BlazorApp5.Contracts;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.CSharp;
 using Microsoft.Extensions.Logging;
 
@@ -19,6 +22,9 @@ public static class SamplePluginPublisher
 
     public static void EnsureSamplePlugin(string contentRootPath, ILogger logger)
     {
+        ArgumentNullException.ThrowIfNull(contentRootPath);
+        ArgumentNullException.ThrowIfNull(logger);
+
         var pluginDirectory = Path.Combine(contentRootPath, "Plugins", "Hello");
         Directory.CreateDirectory(pluginDirectory);
 
@@ -67,7 +73,7 @@ public static class SamplePluginPublisher
             GenerateInMemory = false,
             OutputAssembly = assemblyPath,
             IncludeDebugInformation = false,
-            CompilerOptions = "/target:library /langversion:preview"
+            CompilerOptions = "/target:library"
         };
 
         var referencedAssemblies = new[]
@@ -75,6 +81,7 @@ public static class SamplePluginPublisher
             typeof(object).Assembly.Location,
             typeof(Task).Assembly.Location,
             typeof(ComponentBase).Assembly.Location,
+            typeof(RenderTreeBuilder).Assembly.Location,
             typeof(IPlugin).Assembly.Location,
         };
 
@@ -83,41 +90,42 @@ public static class SamplePluginPublisher
             parameters.ReferencedAssemblies.Add(reference);
         }
 
-        var source = @"using System;
-using System.Threading;
-using System.Threading.Tasks;
-using BlazorApp5.Contracts;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Rendering;
+        var source = """
+            using System;
+            using System.Threading;
+            using System.Threading.Tasks;
+            using BlazorApp5.Contracts;
+            using Microsoft.AspNetCore.Components;
+            using Microsoft.AspNetCore.Components.Rendering;
 
-namespace HelloPlugin;
+            namespace HelloPlugin;
 
-public sealed class HelloBlazorPlugin : IBlazorPlugin
-{
-    public string Id => \"hello\";
-    public string Name => \"Hello Plugin\";
-    public string Version => \"1.0.0\";
-    public Type? RootComponent => typeof(HelloPluginComponent);
-    public string? RouteBase => \"hello\";
+            public sealed class HelloBlazorPlugin : IBlazorPlugin
+            {
+                public string Id => "hello";
+                public string Name => "Hello Plugin";
+                public string Version => "1.0.0";
+                public Type? RootComponent => typeof(HelloPluginComponent);
+                public string? RouteBase => "hello";
 
-    public void Initialize(IServiceProvider serviceProvider)
-    {
-    }
+                public void Initialize(IServiceProvider serviceProvider)
+                {
+                }
 
-    public Task ExecuteAsync(CancellationToken cancellationToken) => Task.CompletedTask;
-}
+                public Task ExecuteAsync(CancellationToken cancellationToken) => Task.CompletedTask;
+            }
 
-public sealed class HelloPluginComponent : ComponentBase
-{
-    protected override void BuildRenderTree(RenderTreeBuilder builder)
-    {
-        builder.OpenElement(0, \"div\");
-        builder.AddAttribute(1, \"class\", \"alert alert-info\");
-        builder.AddContent(2, \"Hello from the dynamically generated plugin!\");
-        builder.CloseElement();
-    }
-}
-";
+            public sealed class HelloPluginComponent : ComponentBase
+            {
+                protected override void BuildRenderTree(RenderTreeBuilder builder)
+                {
+                    builder.OpenElement(0, "div");
+                    builder.AddAttribute(1, "class", "alert alert-info");
+                    builder.AddContent(2, "Hello from the dynamically generated plugin!");
+                    builder.CloseElement();
+                }
+            }
+            """;
 
         var results = provider.CompileAssemblyFromSource(parameters, source);
         if (results.Errors.HasErrors)
