@@ -1,16 +1,19 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
-	<PropertyGroup>
-		<!-- สร้างสำหรับ Windows โดยตรง -->
-		<TargetFramework>net8.0-windows</TargetFramework>
-		<EnableWindowsTargeting>true</EnableWindowsTargeting>
+        <PropertyGroup>
+                <!-- สร้างสำหรับ Windows โดยตรง -->
+                <TargetFramework>net8.0-windows</TargetFramework>
+                <EnableWindowsTargeting>true</EnableWindowsTargeting>
 
-		<!-- เปิด desktop APIs -->
-		<UseWindowsForms>true</UseWindowsForms>
-		<UseWPF>true</UseWPF>
+                <!-- เปิด desktop APIs -->
+                <UseWindowsForms>true</UseWindowsForms>
+                <UseWPF>true</UseWPF>
 
-		<Nullable>enable</Nullable>
-		<ImplicitUsings>enable</ImplicitUsings>
-	</PropertyGroup>
+                <Nullable>enable</Nullable>
+                <ImplicitUsings>enable</ImplicitUsings>
+
+                <!-- ปรับให้ namespace พื้นฐานตรงกับโค้ดที่มีอยู่ -->
+                <RootNamespace>BlazorApp5</RootNamespace>
+        </PropertyGroup>
 
 	<!-- ดึง shared framework ฝั่ง Windows Desktop (มี WindowsBase, Forms ฯลฯ) -->
 	<ItemGroup>
