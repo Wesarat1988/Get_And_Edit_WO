@@ -140,6 +140,8 @@ label span {
     background: rgba(148, 163, 184, 0.18);
     color: #475569;
     border: 1px solid rgba(148, 163, 184, 0.25);
+    opacity: 1;
+    transition: opacity 0.4s ease;
 }
 
 .status-message.success {
@@ -158,6 +160,10 @@ label span {
     background: rgba(239, 68, 68, 0.12);
     color: #b91c1c;
     border-color: rgba(239, 68, 68, 0.25);
+}
+
+.status-message.fade-out {
+    opacity: 0;
 }
 
 .modal-backdrop {

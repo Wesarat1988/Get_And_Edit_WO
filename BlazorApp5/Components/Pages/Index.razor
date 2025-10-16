@@ -3,10 +3,12 @@
 @inject HttpClient HttpClient
 @inject IJSRuntime JS
 @inject ILogger<BlazorApp5.Components.Pages.Index> Log
+@implements IDisposable
 
 @using System.Net
 @using System.Text.Json
 @using System.Linq
+@using System.Threading
 @using BlazorApp5.Helpers
 
 <div class="workorder-layout">
@@ -49,9 +51,9 @@
             </label>
         </div>
 
-        @if (!string.IsNullOrWhiteSpace(StatusMessage))
+        @if (IsStatusVisible)
         {
-            <div class="status-message @StatusLevel">@StatusMessage</div>
+            <div class="status-message @StatusLevel @(IsStatusFading ? "fade-out" : string.Empty)">@StatusMessage</div>
         }
     </section>
 </div>
@@ -237,6 +239,9 @@
 
     private string StatusMessage { get; set; } = string.Empty;
     private string StatusLevel { get; set; } = "info";
+    private bool IsStatusVisible { get; set; }
+    private bool IsStatusFading { get; set; }
+    private CancellationTokenSource? statusResetCts;
 
     private string WorkOrder { get; set; } = string.Empty;
     private string Model { get; set; } = string.Empty;
@@ -545,8 +550,64 @@
 
     private void SetStatus(string message, string level)
     {
+        statusResetCts?.Cancel();
+        statusResetCts?.Dispose();
+        statusResetCts = null;
+
         StatusMessage = message;
         StatusLevel = string.IsNullOrWhiteSpace(level) ? "info" : level;
+        IsStatusFading = false;
+        IsStatusVisible = !string.IsNullOrWhiteSpace(message);
+
+        if (IsStatusVisible && string.Equals(StatusLevel, "success", System.StringComparison.OrdinalIgnoreCase))
+        {
+            var cts = new CancellationTokenSource();
+            statusResetCts = cts;
+            _ = ScheduleStatusClearAsync(cts.Token);
+        }
+        else
+        {
+            StatusLevel = "info";
+        }
+    }
+
+    private async Task ScheduleStatusClearAsync(CancellationToken token)
+    {
+        try
+        {
+            await Task.Delay(TimeSpan.FromSeconds(5), token);
+        }
+        catch (TaskCanceledException)
+        {
+            return;
+        }
+
+        IsStatusFading = true;
+        await InvokeAsync(StateHasChanged);
+
+        try
+        {
+            await Task.Delay(TimeSpan.FromMilliseconds(500), token);
+        }
+        catch (TaskCanceledException)
+        {
+            return;
+        }
+
+        StatusMessage = string.Empty;
+        StatusLevel = "info";
+        IsStatusVisible = false;
+        IsStatusFading = false;
+        statusResetCts?.Dispose();
+        statusResetCts = null;
+
+        await InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        statusResetCts?.Cancel();
+        statusResetCts?.Dispose();
     }
 
     private sealed class PendingMoConfig

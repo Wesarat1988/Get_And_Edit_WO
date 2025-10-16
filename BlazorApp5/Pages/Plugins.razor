@@ -1,0 +1,39 @@
+@page "/plugins"
+@using BlazorApp5.Contracts
+@inject List<IBlazorPlugin> PluginCatalog
+
+<PageTitle>Plugins</PageTitle>
+
+<h1 class="display-6">Available Plugins</h1>
+
+@if (PluginCatalog.Count == 0)
+{
+    <p class="text-muted">No plugins are currently loaded.</p>
+}
+else
+{
+    <div class="list-group gap-3">
+        @foreach (var plugin in PluginCatalog)
+        {
+            <section class="list-group-item">
+                <header class="mb-2">
+                    <h2 class="h5 mb-1">@plugin.Name</h2>
+                    <div class="text-muted small">@plugin.Id — v@plugin.Version</div>
+                    @if (!string.IsNullOrWhiteSpace(plugin.RouteBase))
+                    {
+                        <div class="small">Base route: @plugin.RouteBase</div>
+                    }
+                </header>
+
+                @if (plugin.RootComponent is not null)
+                {
+                    <DynamicComponent Type="@plugin.RootComponent" />
+                }
+                else
+                {
+                    <p class="text-muted">This plugin does not expose a Blazor component.</p>
+                }
+            </section>
+        }
+    </div>
+}
