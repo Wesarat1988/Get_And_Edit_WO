@@ -1,19 +1,19 @@
 @page "/plugins"
 @using BlazorApp5.Contracts
-@inject List<IBlazorPlugin> Plugins
+@inject List<IBlazorPlugin> PluginCatalog
 
 <PageTitle>Plugins</PageTitle>
 
 <h1 class="display-6">Available Plugins</h1>
 
-@if (Plugins.Count == 0)
+@if (PluginCatalog.Count == 0)
 {
     <p class="text-muted">No plugins are currently loaded.</p>
 }
 else
 {
     <div class="list-group gap-3">
-        @foreach (var plugin in Plugins)
+        @foreach (var plugin in PluginCatalog)
         {
             <section class="list-group-item">
                 <header class="mb-2">
