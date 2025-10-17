@@ -30,24 +30,28 @@
                 <PackageReference Include="System.IO.Ports" Version="9.0.5" />
         </ItemGroup>
 
-	<ItemGroup>
-		<Reference Include="DeltaLibrary">
-			<HintPath>..\..\..\..\Downloads\DeltaLibrary 1.dll</HintPath>
-			<Private>True</Private>
-			<SpecificVersion>False</SpecificVersion>
-		</Reference>
-	</ItemGroup>
+        <ItemGroup>
+                <Reference Include="DeltaLibrary">
+                        <HintPath>..\..\..\..\Downloads\DeltaLibrary 1.dll</HintPath>
+                        <Private>True</Private>
+                        <SpecificVersion>False</SpecificVersion>
+                </Reference>
+        </ItemGroup>
 
-	<ItemGroup>
-		<Folder Include="Properties\" />
-		<Folder Include="wwwroot\exports\" />
-		<Folder Include="wwwroot\tools\" />
-	</ItemGroup>
+        <ItemGroup>
+                <ProjectReference Include="..\Contracts\Contracts.csproj" />
+        </ItemGroup>
 
-	<ItemGroup>
-		<Content Update="wwwroot\tools\**\*">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-			<CopyToPublishDirectory>Always</CopyToPublishDirectory>
-		</Content>
-	</ItemGroup>
+        <ItemGroup>
+                <Folder Include="Properties\" />
+                <Folder Include="wwwroot\exports\" />
+                <Folder Include="wwwroot\tools\" />
+        </ItemGroup>
+
+        <ItemGroup>
+                <Content Update="wwwroot\tools\**\*">
+                        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+                        <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+                </Content>
+        </ItemGroup>
 </Project>
