@@ -1,0 +1,7 @@
+{
+  "id": "demo.hello",
+  "name": "Hello Plugin",
+  "version": "1.0.0",
+  "assembly": "Demo.Hello.dll",
+  "entryType": "Demo.Hello.HelloPlugin"
+}
