@@ -1,6 +1,6 @@
 using BlazorApp5;
 using BlazorApp5.Services;
-using BlazorApp5.Contracts;
+using Contracts;
 using BlazorApp5.Hosting;
 using System.IO;
 using System.Linq;

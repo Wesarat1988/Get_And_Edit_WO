@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
-using BlazorApp5.Contracts;
+using Contracts;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.CSharp;
@@ -94,7 +94,7 @@ public static class SamplePluginPublisher
             using System;
             using System.Threading;
             using System.Threading.Tasks;
-            using BlazorApp5.Contracts;
+            using Contracts;
             using Microsoft.AspNetCore.Components;
             using Microsoft.AspNetCore.Components.Rendering;
 
@@ -104,7 +104,7 @@ public static class SamplePluginPublisher
             {
                 public string Id => "hello";
                 public string Name => "Hello Plugin";
-                public string Version => "1.0.0";
+                public Version Version => new Version(1, 0, 0);
                 public Type? RootComponent => typeof(HelloPluginComponent);
                 public string? RouteBase => "hello";
 
