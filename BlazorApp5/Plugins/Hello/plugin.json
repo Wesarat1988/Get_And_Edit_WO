@@ -1,7 +1,8 @@
 {
-  "id": "hello",
-  "name": "Hello Plugin",
-  "version": "1.0.0",
-  "assembly": "HelloPlugin.dll",
-  "entryType": "HelloPlugin.HelloBlazorPlugin"
+    "id": "workorder",
+    "name": "Work Order Plugin",
+    "version": "1.0.0",
+    "assembly": "WorkOrderPlugin.dll",
+    "entryType": "BlazorApp5.WorkOrderBlazorPlugin",
+    "routeBase": "/workorders"
 }
