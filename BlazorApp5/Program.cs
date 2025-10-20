@@ -1,10 +1,14 @@
 using BlazorApp5;
+using BlazorApp5.Hosting;
 using BlazorApp5.Services;
 using Contracts;
-using BlazorApp5.Hosting;
 using System.IO;
 using System.Linq;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 var builder = WebApplication.CreateBuilder(args);
