@@ -1,0 +1,7 @@
+{
+  "id": "workorder",
+  "name": "Work Order Plugin",
+  "version": "1.0.0",
+  "assembly": "BlazorApp5.dll",
+  "entryType": "BlazorApp5.WorkOrderBlazorPlugin"
+}
