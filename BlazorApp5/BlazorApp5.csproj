@@ -1,57 +1,31 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 	<PropertyGroup>
-		<!-- สร้างสำหรับ Windows โดยตรง -->
-		<TargetFramework>net8.0-windows</TargetFramework>
-		<EnableWindowsTargeting>true</EnableWindowsTargeting>
-
-		<!-- เปิด desktop APIs -->
-		<UseWindowsForms>true</UseWindowsForms>
-		<UseWPF>true</UseWPF>
-
+		<!-- ให้ตรงกับ Host (ถ้า Host เป็น net8.0 ให้ใช้ net8.0) -->
+		<TargetFramework>net8.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
+
+		<!-- (ไม่บังคับ) ตั้งชื่อไฟล์ DLL ให้จำง่าย -->
+		<!-- <AssemblyName>WorkOrder.Plugin</AssemblyName> -->
 	</PropertyGroup>
 
-	<!-- ดึง shared framework ฝั่ง Windows Desktop (มี WindowsBase, Forms ฯลฯ) -->
+	<!-- ให้ใช้คอมโพเนนต์ Razor/Blazor ใน class library -->
 	<ItemGroup>
-		<FrameworkReference Include="Microsoft.WindowsDesktop.App" />
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
 	</ItemGroup>
 
-	<!-- อ้างอิง UI Automation + WindowsBase (กรณีใช้ System.Windows.Point) -->
+	<!-- อ้างอิง Contracts ของคุณ (แบบ ProjectReference หรือ Reference DLL ก็ได้) -->
 	<ItemGroup>
-		<Reference Include="UIAutomationClient" />
-		<Reference Include="UIAutomationTypes" />
-		<Reference Include="WindowsBase" />
+		<ProjectReference Include="..\Contracts\Contracts.csproj" />
+		<!-- หรือ
+    <Reference Include="Contracts">
+      <HintPath>..\path\to\Contracts.dll</HintPath>
+    </Reference>
+    -->
 	</ItemGroup>
 
-        <ItemGroup>
-                <PackageReference Include="Microsoft.Playwright" Version="1.55.0" />
-                <PackageReference Include="NModbus4.NetCore" Version="2.1.0" />
-                <PackageReference Include="System.IO.Ports" Version="9.0.5" />
-        </ItemGroup>
-
-        <ItemGroup>
-                <Reference Include="DeltaLibrary">
-                        <HintPath>..\..\..\..\Downloads\DeltaLibrary 1.dll</HintPath>
-                        <Private>True</Private>
-                        <SpecificVersion>False</SpecificVersion>
-                </Reference>
-        </ItemGroup>
-
-        <ItemGroup>
-                <ProjectReference Include="..\Contracts\Contracts.csproj" />
-        </ItemGroup>
-
-        <ItemGroup>
-                <Folder Include="Properties\" />
-                <Folder Include="wwwroot\exports\" />
-                <Folder Include="wwwroot\tools\" />
-        </ItemGroup>
-
-        <ItemGroup>
-                <Content Update="wwwroot\tools\**\*">
-                        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-                        <CopyToPublishDirectory>Always</CopyToPublishDirectory>
-                </Content>
-        </ItemGroup>
+	<!-- ถ้าต้องการให้ plugin.json ติดไปกับ output ของปลั๊กอิน -->
+	<ItemGroup>
+		<None Include="plugin.json" CopyToOutputDirectory="Always" />
+	</ItemGroup>
 </Project>
