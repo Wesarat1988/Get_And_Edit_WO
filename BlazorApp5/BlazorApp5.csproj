@@ -9,9 +9,16 @@
 		<!-- ตั้งชื่อ DLL ชัดเจน ไม่ชนกับ Host -->
 		<AssemblyName>WorkOrderPlugin</AssemblyName>
 
-		<!-- ให้ namespace ของโค้ดปลั๊กอินตรงกับที่คุณใช้จริง -->
-		<RootNamespace>BlazorApp5</RootNamespace>
-	</PropertyGroup>
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.0" />
+    <PackageReference Include="NModbus4" Version="2.0.305" />
+    <PackageReference Include="System.CodeDom" Version="8.0.0" />
+    <PackageReference Include="System.IO.Ports" Version="8.0.0" />
+  </ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\Contracts\Contracts.csproj" />
