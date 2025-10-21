@@ -4,6 +4,5 @@
   "version": "1.0.0",
   "assembly": "WorkOrderBlazorPlugin.dll",
   "entryType": "WorkOrderBlazorPlugin.PluginEntry",
-  "routeBase": "/workorders",
   "route": "/workorders"
 }

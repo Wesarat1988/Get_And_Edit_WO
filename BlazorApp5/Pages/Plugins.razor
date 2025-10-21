@@ -19,9 +19,9 @@ else
                 <header class="mb-2">
                     <h2 class="h5 mb-1">@plugin.Name</h2>
                     <div class="text-muted small">@plugin.Id — v@plugin.Version</div>
-                    @if (!string.IsNullOrWhiteSpace(plugin.RouteBase))
+                    @if (!string.IsNullOrWhiteSpace(plugin.BaseRoute))
                     {
-                        <div class="small">Base route: @plugin.RouteBase</div>
+                        <div class="small">Base route: @plugin.BaseRoute</div>
                     }
                 </header>
 

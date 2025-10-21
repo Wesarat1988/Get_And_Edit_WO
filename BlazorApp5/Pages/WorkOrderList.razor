@@ -9,11 +9,11 @@
 
 <h3 class="mb-3">Work Orders</h3>
 
-<div class="mb-3 d-flex flex-wrap gap-2">
+<div class="mb-3 flex gap-2">
   <input class="form-control" placeholder="Search (Number/PartNo)" @bind="search" />
-  <input class="form-control" placeholder="Line" @bind="line" style="max-width: 120px" />
-  <input class="form-control" placeholder="Status" @bind="status" style="max-width: 140px" />
-  <input class="form-control" placeholder="Part No" @bind="partNo" style="max-width: 160px" />
+  <input class="form-control" placeholder="Line" @bind="line" style="max-width:120px" />
+  <input class="form-control" placeholder="Status" @bind="status" style="max-width:140px" />
+  <input class="form-control" placeholder="Part No" @bind="partNo" style="max-width:160px" />
   <button class="btn btn-primary" @onclick="Reload">Search</button>
 </div>
 
@@ -43,7 +43,7 @@ else
         <td>@w.PartNo</td>
         <td>@w.Status</td>
         <td>@w.CreatedUtc.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</td>
-        <td><button class="btn btn-link p-0" @onclick="() => OpenDetail(w.Id)">Open</button></td>
+        <td><a class="btn btn-link" @onclick="() => Nav.NavigateTo($"/workorders/{w.Id}")">Open</a></td>
       </tr>
     }
     </tbody>
@@ -60,21 +60,12 @@ else
 }
 
 @code {
-  private const string DetailRoutePrefix = PluginEntry.Route;
+  PageResult<WorkOrderDto>? data;
+  bool loading;
+  int page = 1, pageSize = 20;
+  string? search, status, line, partNo;
 
-  private PageResult<WorkOrderDto>? data;
-  private bool loading;
-  private int page = 1;
-  private int pageSize = 20;
-  private string? search;
-  private string? status;
-  private string? line;
-  private string? partNo;
-
-  protected override async Task OnInitializedAsync()
-  {
-    await Load();
-  }
+  protected override async Task OnInitializedAsync() => await Load();
 
   private async Task Load()
   {
@@ -108,13 +99,5 @@ else
   {
     page++;
     await Load();
-  }
-
-  private void OpenDetail(string id)
-  {
-    if (!string.IsNullOrEmpty(id))
-    {
-      Nav.NavigateTo($"{DetailRoutePrefix}/{id}");
-    }
   }
 }

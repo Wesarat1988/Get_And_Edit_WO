@@ -106,7 +106,7 @@ public static class SamplePluginPublisher
                 public string Name => "Hello Plugin";
                 public Version Version => new Version(1, 0, 0);
                 public Type? RootComponent => typeof(HelloPluginComponent);
-                public string? RouteBase => "hello";
+                public string? BaseRoute => "hello";
 
                 public void Initialize(IServiceProvider serviceProvider)
                 {

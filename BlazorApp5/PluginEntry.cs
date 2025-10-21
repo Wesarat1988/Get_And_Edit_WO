@@ -14,7 +14,7 @@ public sealed class PluginEntry : IBlazorPlugin
 {
     public const string PluginId = "workorder";
     public const string PluginName = "Work Orders";
-    public const string Route = "/workorders";
+    public const string WorkOrdersRoute = "/workorders";
 
     private ILogger<PluginEntry>? _logger;
 
@@ -24,14 +24,13 @@ public sealed class PluginEntry : IBlazorPlugin
 
     public Version Version => new(1, 0, 0);
 
-    public string? RouteBase => Route;
+    public string? BaseRoute => WorkOrdersRoute;
 
     public Type? RootComponent => typeof(Pages.WorkOrderList);
 
     /// <summary>
     /// Allows the host to register any plugin services prior to activation.
     /// </summary>
-    /// <remarks>The current host does not call this hook but it keeps the entry aligned with the plugin contract.</remarks>
     public void ConfigureServices(IServiceCollection services)
     {
         ArgumentNullException.ThrowIfNull(services);

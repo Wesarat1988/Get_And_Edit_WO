@@ -19,7 +19,7 @@ public sealed class HelloPlugin : IBlazorPlugin
 
     public Type? RootComponent => typeof(HelloPanel);
 
-    public string? RouteBase => "/plugins/hello";
+    public string? BaseRoute => "/plugins/hello";
 
     public void Initialize(IServiceProvider services)
     {
