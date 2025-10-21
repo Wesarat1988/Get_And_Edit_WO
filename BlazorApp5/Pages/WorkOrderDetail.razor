@@ -1,0 +1,58 @@
+@namespace WorkOrderBlazorPlugin.Pages
+@page "/workorders/{id}"
+@using System
+@using Contracts.WorkOrders
+@inject IWorkOrderReader Reader
+@inject NavigationManager Nav
+@using Microsoft.AspNetCore.Components
+
+<h3 class="mb-3">Work Order Detail</h3>
+
+@if (loading)
+{
+  <p>Loading...</p>
+}
+else if (item is null)
+{
+  <div class="alert alert-warning">Not found</div>
+}
+else
+{
+  <dl class="row">
+    <dt class="col-sm-3">Number</dt><dd class="col-sm-9">@item.Number</dd>
+    <dt class="col-sm-3">Status</dt><dd class="col-sm-9">@item.Status</dd>
+    <dt class="col-sm-3">Line</dt><dd class="col-sm-9">@item.Line</dd>
+    <dt class="col-sm-3">Part No</dt><dd class="col-sm-9">@item.PartNo</dd>
+    <dt class="col-sm-3">Created</dt><dd class="col-sm-9">@item.CreatedUtc.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</dd>
+    @if (item.DueUtc is not null)
+    {
+      <dt class="col-sm-3">Due</dt><dd class="col-sm-9">@item.DueUtc.Value.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</dd>
+    }
+  </dl>
+  <button class="btn btn-secondary" @onclick="GoBack">Back</button>
+}
+
+@code {
+  private const string ListRoute = PluginEntry.Route;
+
+  [Parameter]
+  public string? Id { get; set; }
+
+  private WorkOrderDto? item;
+  private bool loading;
+
+  protected override async Task OnParametersSetAsync()
+  {
+    loading = true;
+    try
+    {
+      item = string.IsNullOrWhiteSpace(Id) ? null : await Reader.GetAsync(Id);
+    }
+    finally
+    {
+      loading = false;
+    }
+  }
+
+  private void GoBack() => Nav.NavigateTo(ListRoute);
+}

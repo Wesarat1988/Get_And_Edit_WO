@@ -1,0 +1,120 @@
+@namespace WorkOrderBlazorPlugin.Pages
+@page "/workorders"
+@using System
+@using Contracts.Common
+@using Contracts.WorkOrders
+@using Microsoft.AspNetCore.Components
+@inject IWorkOrderReader Reader
+@inject NavigationManager Nav
+
+<h3 class="mb-3">Work Orders</h3>
+
+<div class="mb-3 d-flex flex-wrap gap-2">
+  <input class="form-control" placeholder="Search (Number/PartNo)" @bind="search" />
+  <input class="form-control" placeholder="Line" @bind="line" style="max-width: 120px" />
+  <input class="form-control" placeholder="Status" @bind="status" style="max-width: 140px" />
+  <input class="form-control" placeholder="Part No" @bind="partNo" style="max-width: 160px" />
+  <button class="btn btn-primary" @onclick="Reload">Search</button>
+</div>
+
+@if (loading)
+{
+  <p>Loading...</p>
+}
+else
+{
+  <table class="table table-sm table-hover">
+    <thead>
+      <tr>
+        <th>No.</th>
+        <th>Line</th>
+        <th>Part</th>
+        <th>Status</th>
+        <th>Created</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+    @foreach (var w in data?.Items ?? Array.Empty<WorkOrderDto>())
+    {
+      <tr>
+        <td>@w.Number</td>
+        <td>@w.Line</td>
+        <td>@w.PartNo</td>
+        <td>@w.Status</td>
+        <td>@w.CreatedUtc.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</td>
+        <td><button class="btn btn-link p-0" @onclick="() => OpenDetail(w.Id)">Open</button></td>
+      </tr>
+    }
+    </tbody>
+  </table>
+
+  <div class="d-flex justify-content-between align-items-center">
+    <div>Showing @((data?.Items?.Count ?? 0)) of @data?.TotalCount</div>
+    <div class="btn-group">
+      <button class="btn btn-outline-secondary" disabled="@(page <= 1)" @onclick="PrevPage">Prev</button>
+      <span class="btn btn-light disabled">Page @page</span>
+      <button class="btn btn-outline-secondary" disabled="@((data?.Items?.Count ?? 0) < pageSize)" @onclick="NextPage">Next</button>
+    </div>
+  </div>
+}
+
+@code {
+  private const string DetailRoutePrefix = PluginEntry.Route;
+
+  private PageResult<WorkOrderDto>? data;
+  private bool loading;
+  private int page = 1;
+  private int pageSize = 20;
+  private string? search;
+  private string? status;
+  private string? line;
+  private string? partNo;
+
+  protected override async Task OnInitializedAsync()
+  {
+    await Load();
+  }
+
+  private async Task Load()
+  {
+    loading = true;
+    try
+    {
+      data = await Reader.SearchAsync(new PageRequest(page, pageSize, search, status, line, partNo, null, null));
+    }
+    finally
+    {
+      loading = false;
+    }
+  }
+
+  private async Task Reload()
+  {
+    page = 1;
+    await Load();
+  }
+
+  private async Task PrevPage()
+  {
+    if (page > 1)
+    {
+      page--;
+      await Load();
+    }
+  }
+
+  private async Task NextPage()
+  {
+    page++;
+    await Load();
+  }
+
+  private void OpenDetail(string id)
+  {
+    if (!string.IsNullOrEmpty(id))
+    {
+      Nav.NavigateTo($"{DetailRoutePrefix}/{id}");
+    }
+  }
+}
