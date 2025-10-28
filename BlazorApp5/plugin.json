@@ -1,8 +1,0 @@
-{
-    "id": "workorder",
-    "name": "Work Order Plugin",
-    "version": "1.0.0",
-    "assembly": "BlazorApp5.dll", // ← ชื่อ DLL ของโปรเจกต์ปลั๊กอิน (ดูใน bin/Release/…)
-    "entryType": "BlazorApp5.WorkOrderBlazorPlugin",
-    "routeBase": "/workorders"
-}
