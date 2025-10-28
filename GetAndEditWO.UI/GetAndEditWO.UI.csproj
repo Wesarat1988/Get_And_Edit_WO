@@ -1,14 +1,53 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
-	<PropertyGroup>
-		<TargetFramework>net8.0</TargetFramework>
-		<Nullable>enable</Nullable>
-		<ImplicitUsings>enable</ImplicitUsings>
-	</PropertyGroup>
+        <PropertyGroup>
+                <TargetFramework>net8.0</TargetFramework>
+                <Nullable>enable</Nullable>
+                <ImplicitUsings>enable</ImplicitUsings>
+        </PropertyGroup>
+
+        <PropertyGroup>
+                <HostPluginsDir>..\BlazorApp5\Plugins\WorkOrder\</HostPluginsDir>
+                <PluginPublishDir>$(MSBuildThisFileDirectory)Plugins\WorkOrder\</PluginPublishDir>
+        </PropertyGroup>
 
 	<!-- ไม่ต้องอ้างแพ็กเกจ Components.Web เอง เมื่อใช้ net8 + Razor SDK -->
-	<ItemGroup>
-		<ProjectReference Include="..\..\Contracts\Contracts.csproj" />
-		<!-- ลบอันนี้ออก: ปลั๊กอินไม่ควรอ้าง Host -->
-		<!-- <ProjectReference Include="..\BlazorApp5\BlazorApp5.csproj" /> -->
-	</ItemGroup>
+        <ItemGroup>
+                <FrameworkReference Include="Microsoft.AspNetCore.App" />
+        </ItemGroup>
+
+        <ItemGroup>
+                <PackageReference Include="Microsoft.AspNetCore.Components" Version="8.0.10" />
+                <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.10" />
+                <PackageReference Include="Microsoft.JSInterop" Version="8.0.10" />
+        </ItemGroup>
+
+        <ItemGroup>
+                <ProjectReference Include="..\..\Contracts\Contracts.csproj" />
+                <!-- ลบอันนี้ออก: ปลั๊กอินไม่ควรอ้าง Host -->
+                <!-- <ProjectReference Include="..\BlazorApp5\BlazorApp5.csproj" /> -->
+        </ItemGroup>
+
+        <ItemGroup>
+                <None Include="Plugins\WorkOrder\plugin.json" CopyToOutputDirectory="Always" />
+        </ItemGroup>
+
+        <Target Name="CopyPluginArtifacts" AfterTargets="Build">
+                <MakeDir Directories="$(PluginPublishDir)" />
+                <MakeDir Directories="$(HostPluginsDir)" />
+
+                <ItemGroup>
+                        <PluginBinaries Include="$(TargetDir)$(TargetFileName)" />
+                        <PluginBinaries Include="$(TargetDir)$(TargetName).deps.json"
+                                        Condition="Exists('$(TargetDir)$(TargetName).deps.json')" />
+                        <PluginBinaries Include="$(TargetDir)$(TargetName).pdb"
+                                        Condition="Exists('$(TargetDir)$(TargetName).pdb')" />
+                        <PluginManifest Include="Plugins\WorkOrder\plugin.json" />
+                </ItemGroup>
+
+                <Copy SourceFiles="@(PluginBinaries)" DestinationFolder="$(PluginPublishDir)" SkipUnchangedFiles="true" />
+                <Copy SourceFiles="@(PluginManifest)" DestinationFolder="$(PluginPublishDir)" SkipUnchangedFiles="true" />
+
+                <Copy SourceFiles="@(PluginBinaries)" DestinationFolder="$(HostPluginsDir)" SkipUnchangedFiles="true" />
+                <Copy SourceFiles="@(PluginManifest)" DestinationFolder="$(HostPluginsDir)" SkipUnchangedFiles="true" />
+        </Target>
 </Project>

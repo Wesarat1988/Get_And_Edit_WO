@@ -15,6 +15,12 @@ using Microsoft.Extensions.Logging;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Prefer stable development ports when none are specified explicitly.
+if (string.IsNullOrWhiteSpace(builder.Configuration["ASPNETCORE_URLS"]))
+{
+    builder.WebHost.UseUrls("https://localhost:5001", "http://localhost:5000");
+}
+
 // --- Services ---
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
