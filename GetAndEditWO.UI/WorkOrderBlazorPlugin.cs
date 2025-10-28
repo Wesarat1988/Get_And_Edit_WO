@@ -9,8 +9,11 @@ public sealed class WorkOrderBlazorPlugin : IBlazorPlugin
     public Version Version => new(1, 0, 0, 0);
 
     public Type? RootComponent => typeof(Component1);
-    public string? RouteBase => "/workorders";
+    public string? RouteBase => "/plugins/workorders";
 
-    public void Initialize(IServiceProvider services) { /* register/resolve ถ้าต้องใช้ */ }
+    public void Initialize(IServiceProvider services)
+    {
+    }
+
     public Task ExecuteAsync(CancellationToken ct = default) => Task.CompletedTask;
 }
