@@ -1,0 +1,8 @@
+{
+    "id": "workorder-plugin",
+    "name": "Work Order",
+    "version": "1.0.0",
+    "assembly": "GetAndEditWO.UI.dll",
+    "entryType": "GetAndEditWO.UI.WorkOrderBlazorPlugin",
+    "routeBase": "/workorders"
+}

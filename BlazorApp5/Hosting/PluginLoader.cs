@@ -104,7 +104,7 @@ public static class PluginLoader
             return;
         }
 
-        var loadContext = new AssemblyLoadContext($"{manifest.Id}_{Guid.NewGuid():N}", isCollectible: true);
+        var loadContext = new PluginLoadContext(assemblyPath);
         try
         {
             var assembly = loadContext.LoadFromAssemblyPath(assemblyPath);

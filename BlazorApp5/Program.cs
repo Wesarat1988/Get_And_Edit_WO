@@ -4,6 +4,7 @@ using BlazorApp5.Services;
 using Contracts;
 using System.IO;
 using System.Linq;
+using System.Reflection; // ✅ ใช้ดูชื่อ Assembly
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -28,18 +29,34 @@ builder.Services.AddScoped<RoutingCheckService>();
 // ✅ ใช้ Singleton เพื่อแชร์การเชื่อมต่อ/คิว Modbus ทั้งแอป (UI + Debug endpoint)
 builder.Services.AddSingleton<ModbusService>();
 
+// ✅ ที่เก็บอินสแตนซ์ปลั๊กอิน และรีจิสทรี Assembly สำหรับ Router
 builder.Services.AddSingleton<List<IBlazorPlugin>>();
 builder.Services.AddSingleton<IReadOnlyList<IBlazorPlugin>>(sp => sp.GetRequiredService<List<IBlazorPlugin>>());
+builder.Services.AddSingleton<PluginUiRegistry>();
 
 var app = builder.Build();
 
 var loggerFactory = app.Services.GetRequiredService<ILoggerFactory>();
 var pluginLogger = loggerFactory.CreateLogger("PluginLoader");
 
+// (ออปชัน) สร้าง/ก็อปตัวอย่างปลั๊กอินลงโฟลเดอร์ Plugins ถ้ายังไม่มี
 SamplePluginPublisher.EnsureSamplePlugin(app.Environment.ContentRootPath, pluginLogger);
 
+// โหลดปลั๊กอินเข้า store
 var pluginStore = app.Services.GetRequiredService<List<IBlazorPlugin>>();
 PluginLoader.LoadPlugins(app.Environment.ContentRootPath, pluginStore, app.Services, pluginLogger);
+
+// ✅ ผูก UI assemblies ของปลั๊กอินให้ Router เห็น (ผ่านรีจิสทรี)
+var uiRegistry = app.Services.GetRequiredService<PluginUiRegistry>();
+foreach (var p in pluginStore)
+{
+    if (p.RootComponent is not null)
+    {
+        var asm = p.RootComponent.Assembly;
+        if (!uiRegistry.Assemblies.Contains(asm))
+            uiRegistry.Assemblies.Add(asm);
+    }
+}
 
 // --- Pipeline ---
 if (!app.Environment.IsDevelopment())
@@ -55,6 +72,7 @@ app.UseRouting();
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
 
+// ===== Tools / Debug =====
 app.MapGet("/_assets-check", (IWebHostEnvironment env) =>
 {
     var root = env.WebRootPath;
@@ -122,13 +140,29 @@ app.MapGet("/_assets-check", (IWebHostEnvironment env) =>
     });
 });
 
+// ✅ เอ็นด์พอยต์ตรวจว่าปลั๊กอิน/แอสเซมบลี Router ลงทะเบียนแล้วหรือยัง
+app.MapGet("/_plugins", (IReadOnlyList<IBlazorPlugin> plugins, PluginUiRegistry ui) =>
+{
+    return Results.Json(new
+    {
+        plugins = plugins.Select(p => new
+        {
+            p.Id,
+            p.Name,
+            Version = p.Version.ToString(),
+            RouteBase = (p as Contracts.IBlazorPlugin)?.RouteBase
+        }),
+        uiAssemblies = ui.Assemblies.Select(a => a.GetName().Name).ToArray()
+    });
+});
+
 // ================== Debug Endpoints (Dev only) ==================
 if (app.Environment.IsDevelopment())
 {
     // ยิงสัญญาณภายนอก: เขียน HR4096 = 1 → UI จะจับ polling เองและแสดงผล
     app.MapPost("/debug/raise-trigger", async (ModbusService svc) =>
     {
-        var ok = await svc.RaiseExternalTriggerAsync(); // ⚠️ ต้องมีเมธอดนี้ใน ModbusService (ที่ผมให้ไว้ก่อนหน้า)
+        var ok = await svc.RaiseExternalTriggerAsync();
         return ok ? Results.Ok(new { ok = true, ts = DateTime.Now }) : Results.Problem("failed");
     });
 

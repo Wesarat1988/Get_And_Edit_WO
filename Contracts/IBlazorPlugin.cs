@@ -1,9 +1,6 @@
+﻿using Microsoft.AspNetCore.Components;
 namespace Contracts;
-
-using System;
-
 public interface IBlazorPlugin : IPlugin
 {
-    Type? RootComponent { get; }
-    string? RouteBase { get; }
+    RenderFragment Render() => b => { b.AddContent(0, ""Plugin placeholder""); };
 }

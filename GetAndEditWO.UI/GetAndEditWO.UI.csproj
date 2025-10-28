@@ -1,18 +1,14 @@
-<Project Sdk="Microsoft.NET.Sdk.Razor">
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+	</PropertyGroup>
 
-  <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
-  </PropertyGroup>
-
-
-  <ItemGroup>
-    <SupportedPlatform Include="browser" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="9.0.9" />
-  </ItemGroup>
-
+	<!-- ไม่ต้องอ้างแพ็กเกจ Components.Web เอง เมื่อใช้ net8 + Razor SDK -->
+	<ItemGroup>
+		<ProjectReference Include="..\..\Contracts\Contracts.csproj" />
+		<!-- ลบอันนี้ออก: ปลั๊กอินไม่ควรอ้าง Host -->
+		<!-- <ProjectReference Include="..\BlazorApp5\BlazorApp5.csproj" /> -->
+	</ItemGroup>
 </Project>

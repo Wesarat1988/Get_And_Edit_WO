@@ -1,1 +1,15 @@
-<Routes />
+@using BlazorApp5.Hosting
+@inject PluginUiRegistry PluginUi
+
+<Router AppAssembly="@typeof(App).Assembly"
+        AdditionalAssemblies="@(PluginUi.Assemblies.ToArray())">
+    <Found Context="routeData">
+        <RouteView RouteData="routeData" />
+        <FocusOnNavigate RouteData="routeData" Selector="h1" />
+    </Found>
+    <NotFound>
+        <LayoutView>
+            <p>Sorry, there's nothing at this address.</p>
+        </LayoutView>
+    </NotFound>
+</Router>

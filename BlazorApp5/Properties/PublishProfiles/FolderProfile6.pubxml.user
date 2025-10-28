@@ -2,8 +2,8 @@
 <!-- https://go.microsoft.com/fwlink/?LinkID=208121. -->
 <Project>
   <PropertyGroup>
-    <_PublishTargetUrl>D:\Release_Camp</_PublishTargetUrl>
-    <History>True|2025-10-21T03:38:15.8169986Z||;True|2025-06-12T08:29:24.4190320+07:00||;</History>
+    <_PublishTargetUrl>D:\My Work\Work_Order_Web</_PublishTargetUrl>
+    <History>True|2025-10-21T08:04:34.8127009Z||;True|2025-10-21T10:39:32.7667071+07:00||;</History>
     <LastFailureDetails />
   </PropertyGroup>
 </Project>
