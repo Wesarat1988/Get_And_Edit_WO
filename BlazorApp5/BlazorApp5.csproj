@@ -10,10 +10,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="plugin.json" CopyToOutputDirectory="Always" />
-  </ItemGroup>
-
-  <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 
@@ -41,19 +37,7 @@
 		</None>
 	</ItemGroup>
 	
-  <PropertyGroup>
-    <HostPluginsDir>..\GetAndEditWO.UI\Plugins\WorkOrder\</HostPluginsDir>
-  </PropertyGroup>
-
-	<PropertyGroup>
-		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-	</PropertyGroup>
-	
-  <Target Name="CopyPluginToHost" AfterTargets="Build">
-    <ItemGroup>
-      <PluginFiles Include="$(TargetPath)" />
-      <PluginFiles Include="$(ProjectDir)plugin.json" />
-    </ItemGroup>
-    <Copy SourceFiles="@(PluginFiles)" DestinationFolder="$(HostPluginsDir)" SkipUnchangedFiles="true" />
-  </Target>
+        <PropertyGroup>
+                <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+        </PropertyGroup>
 </Project>
