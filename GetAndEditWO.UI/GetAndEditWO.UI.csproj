@@ -11,10 +11,14 @@
         </PropertyGroup>
 
 	<!-- ไม่ต้องอ้างแพ็กเกจ Components.Web เอง เมื่อใช้ net8 + Razor SDK -->
-	<ItemGroup>
-		<ProjectReference Include="..\..\Contracts\Contracts.csproj" />
-		<!-- ลบอันนี้ออก: ปลั๊กอินไม่ควรอ้าง Host -->
-		<!-- <ProjectReference Include="..\BlazorApp5\BlazorApp5.csproj" /> -->
+        <ItemGroup>
+                <FrameworkReference Include="Microsoft.AspNetCore.App" />
+        </ItemGroup>
+
+        <ItemGroup>
+                <ProjectReference Include="..\..\Contracts\Contracts.csproj" />
+                <!-- ลบอันนี้ออก: ปลั๊กอินไม่ควรอ้าง Host -->
+                <!-- <ProjectReference Include="..\BlazorApp5\BlazorApp5.csproj" /> -->
         </ItemGroup>
 
         <ItemGroup>
