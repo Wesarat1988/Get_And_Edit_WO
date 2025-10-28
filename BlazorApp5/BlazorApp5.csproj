@@ -10,14 +10,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Contracts\Contracts.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="plugin.json" CopyToOutputDirectory="Always" />
-  </ItemGroup>
-
-  <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 
@@ -34,17 +26,4 @@
     </Reference>
   </ItemGroup>
 
-  <PropertyGroup>
-    <HostPluginsDir>..\GetAndEditWO.UI\Plugins\WorkOrder\</HostPluginsDir>
-  </PropertyGroup>
-
-  <Target Name="CopyPluginToHost" AfterTargets="Build">
-    <ItemGroup>
-      <PluginFiles Include="$(TargetPath)" />
-      <PluginFiles Include="$(ProjectDir)plugin.json" />
-    </ItemGroup>
-    <Copy SourceFiles="@(PluginFiles)"
-          DestinationFolder="$(HostPluginsDir)"
-          SkipUnchangedFiles="true" />
-  </Target>
 </Project>
