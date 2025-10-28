@@ -1,7 +1,5 @@
 using BlazorApp5;
-using BlazorApp5.Hosting;
 using BlazorApp5.Services;
-using Contracts;
 using System.IO;
 using System.Linq;
 using Microsoft.AspNetCore.Builder;
@@ -10,7 +8,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,18 +25,7 @@ builder.Services.AddScoped<RoutingCheckService>();
 // ✅ ใช้ Singleton เพื่อแชร์การเชื่อมต่อ/คิว Modbus ทั้งแอป (UI + Debug endpoint)
 builder.Services.AddSingleton<ModbusService>();
 
-builder.Services.AddSingleton<List<IBlazorPlugin>>();
-builder.Services.AddSingleton<IReadOnlyList<IBlazorPlugin>>(sp => sp.GetRequiredService<List<IBlazorPlugin>>());
-
 var app = builder.Build();
-
-var loggerFactory = app.Services.GetRequiredService<ILoggerFactory>();
-var pluginLogger = loggerFactory.CreateLogger("PluginLoader");
-
-SamplePluginPublisher.EnsureSamplePlugin(app.Environment.ContentRootPath, pluginLogger);
-
-var pluginStore = app.Services.GetRequiredService<List<IBlazorPlugin>>();
-PluginLoader.LoadPlugins(app.Environment.ContentRootPath, pluginStore, app.Services, pluginLogger);
 
 // --- Pipeline ---
 if (!app.Environment.IsDevelopment())
