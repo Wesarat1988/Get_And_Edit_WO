@@ -16,6 +16,12 @@
         </ItemGroup>
 
         <ItemGroup>
+                <PackageReference Include="Microsoft.AspNetCore.Components" Version="8.0.10" />
+                <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.10" />
+                <PackageReference Include="Microsoft.JSInterop" Version="8.0.10" />
+        </ItemGroup>
+
+        <ItemGroup>
                 <ProjectReference Include="..\..\Contracts\Contracts.csproj" />
                 <!-- ลบอันนี้ออก: ปลั๊กอินไม่ควรอ้าง Host -->
                 <!-- <ProjectReference Include="..\BlazorApp5\BlazorApp5.csproj" /> -->
